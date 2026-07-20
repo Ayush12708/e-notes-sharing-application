@@ -2,11 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
 from .models import Profile
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == "POST":
         form = RegisterForm(request.POST)
 
@@ -25,6 +29,7 @@ def register(request):
                 semester=form.cleaned_data['semester']
             )
 
+            messages.success(request, "Registration successful! You can now log in with your credentials.")
             return redirect('login')
 
     else:
@@ -34,26 +39,31 @@ def register(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == "POST":
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
 
-        username = request.POST['username']
-        password = request.POST['password']
-
-        user = authenticate(
-            request,
-            username=username,
-            password=password
-        )
+        user = authenticate(request, username=username, password=password)
 
         if user:
             login(request, user)
+            messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+            next_url = request.GET.get('next') or request.POST.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('dashboard')
+        else:
+            messages.error(request, "Invalid username or password. If you haven't registered on this live deployment yet, please click 'Register here' below!")
 
     return render(request, 'accounts/login.html')
 
 
 def logout_view(request):
     logout(request)
+    messages.info(request, "You have been logged out.")
     return redirect('home')
 
 
@@ -72,6 +82,7 @@ def profile_view(request):
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
+            messages.success(request, "Profile details updated successfully!")
             success_msg = True
     else:
         u_form = UserUpdateForm(instance=request.user)
