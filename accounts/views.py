@@ -7,23 +7,45 @@ from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
 from .models import Profile
 
 
-def ensure_default_superuser():
-    """Auto-create a default admin user on production if no users exist."""
+def ensure_default_users():
+    """Ensure standard seed accounts (admin, ayush, bala) exist with verified passwords."""
     try:
-        if User.objects.count() == 0:
-            admin_user = User.objects.create_superuser('admin', 'admin@notehub.com', 'admin123')
-            Profile.objects.create(
-                user=admin_user,
-                phone='1234567890',
-                college='NoteHub University',
-                semester=1
-            )
+        # 1. Admin Account
+        admin_user, created = User.objects.get_or_create(
+            username='admin',
+            defaults={'email': 'admin@notehub.com', 'is_staff': True, 'is_superuser': True}
+        )
+        if not admin_user.check_password('admin123'):
+            admin_user.set_password('admin123')
+            admin_user.save()
+        Profile.objects.get_or_create(user=admin_user, defaults={'college': 'NoteHub University', 'semester': 1})
+
+        # 2. Ayush Account
+        ayush_user, created = User.objects.get_or_create(
+            username='ayush',
+            defaults={'email': 'ayush@notehub.com', 'first_name': 'Ayush', 'last_name': 'Kumar'}
+        )
+        if not ayush_user.check_password('ayush123'):
+            ayush_user.set_password('ayush123')
+            ayush_user.save()
+        Profile.objects.get_or_create(user=ayush_user, defaults={'college': 'Lovely Professional Univ.', 'semester': 5})
+
+        # 3. Bala Account
+        bala_user, created = User.objects.get_or_create(
+            username='bala',
+            defaults={'email': 'bala@notehub.com', 'first_name': 'Bala'}
+        )
+        if not bala_user.check_password('bala123'):
+            bala_user.set_password('bala123')
+            bala_user.save()
+        Profile.objects.get_or_create(user=bala_user, defaults={'college': 'Chandigarh Univ.', 'semester': 3})
+
     except Exception:
         pass
 
 
 def register(request):
-    ensure_default_superuser()
+    ensure_default_users()
 
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -67,7 +89,7 @@ def register(request):
 
 
 def login_view(request):
-    ensure_default_superuser()
+    ensure_default_users()
 
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -83,7 +105,7 @@ def login_view(request):
         # Try exact username match first
         user = authenticate(request, username=username, password=password)
 
-        # Fallback to case-insensitive username match if exact match failed
+        # Fallback to case-insensitive username match
         if user is None:
             try:
                 user_obj = User.objects.get(username__iexact=username)
