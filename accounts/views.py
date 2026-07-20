@@ -33,7 +33,7 @@ def register(request):
 
         if form.is_valid():
             username = form.cleaned_data['username'].strip()
-            if User.objects.filter(username=username).exists():
+            if User.objects.filter(username__iexact=username).exists():
                 messages.error(request, f"Username '{username}' is already taken. Please choose another one.")
                 return render(request, 'accounts/register.html', {'form': form})
 
@@ -46,17 +46,19 @@ def register(request):
 
             Profile.objects.create(
                 user=user,
-                phone=form.cleaned_data['phone'],
-                college=form.cleaned_data['college'],
-                semester=form.cleaned_data['semester']
+                phone=form.cleaned_data.get('phone', ''),
+                college=form.cleaned_data.get('college', ''),
+                semester=form.cleaned_data.get('semester', 1)
             )
 
-            messages.success(request, "Registration successful! You can now sign in with your username and password.")
-            return redirect('login')
+            # Automatically log the user in immediately after registration!
+            login(request, user)
+            messages.success(request, f"Welcome to NoteHub, {user.first_name or user.username}! Your account has been created successfully.")
+            return redirect('dashboard')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
+                    messages.error(request, f"{field.replace('_', ' ').title()}: {error}")
 
     else:
         form = RegisterForm()
@@ -78,7 +80,16 @@ def login_view(request):
             messages.error(request, "Please enter both username and password.")
             return render(request, 'accounts/login.html')
 
+        # Try exact username match first
         user = authenticate(request, username=username, password=password)
+
+        # Fallback to case-insensitive username match if exact match failed
+        if user is None:
+            try:
+                user_obj = User.objects.get(username__iexact=username)
+                user = authenticate(request, username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                user = None
 
         if user is not None:
             if user.is_active:
@@ -91,7 +102,7 @@ def login_view(request):
             else:
                 messages.error(request, "This user account is disabled.")
         else:
-            messages.error(request, "Invalid username or password. If you haven't registered on this website yet, click 'Register here' below to create your free account!")
+            messages.error(request, "Invalid username or password. Please check your credentials or click 'Register here' below!")
 
     return render(request, 'accounts/login.html')
 
