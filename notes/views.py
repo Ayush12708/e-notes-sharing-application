@@ -12,26 +12,19 @@ from .models import Note, Bookmark, Comment
 
 
 def ensure_default_seed_notes():
-    """Ensure core study notes and sample materials are always present in the database."""
+    """Ensure core study notes and sample materials are always present and approved in the database."""
     try:
         from django.contrib.auth.models import User
         from accounts.models import Profile
 
-        admin_user, _ = User.objects.get_or_create(
-            username='admin',
-            defaults={'email': 'admin@notehub.com', 'is_staff': True, 'is_superuser': True}
-        )
-        if not admin_user.check_password('admin123'):
-            admin_user.set_password('admin123')
-            admin_user.save()
+        # Automatically approve any pending notes
+        Note.objects.filter(status='Pending').update(status='Approved')
 
-        ayush_user, _ = User.objects.get_or_create(
-            username='ayush',
-            defaults={'email': 'ayush@notehub.com', 'first_name': 'Ayush', 'last_name': 'Kumar'}
-        )
-        if not ayush_user.check_password('ayush123'):
-            ayush_user.set_password('ayush123')
-            ayush_user.save()
+        # Find or create a seed author user
+        seed_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
+        if not seed_user:
+            seed_user = User.objects.create_superuser('admin', 'admin@notehub.com', 'admin123')
+            Profile.objects.create(user=seed_user, college='NoteHub University', semester=1)
 
         seed_notes_data = [
             {
@@ -41,7 +34,7 @@ def ensure_default_seed_notes():
                 'semester': 4,
                 'description': 'Comprehensive lecture notes covering 1NF, 2NF, 3NF, BCNF, Functional Dependencies, and Lossless Join Decomposition with diagrams.',
                 'content': 'UNIT 3: DATABASE NORMALIZATION\n\n1. Functional Dependency (FD):\nA Functional Dependency X -> Y holds if two tuples having same X value must have same Y value.\n\n2. 1st Normal Form (1NF):\n- Attributes must contain atomic values only.\n- No multivalued or composite attributes allowed.\n\n3. 2nd Normal Form (2NF):\n- Relation must be in 1NF.\n- No partial dependency exists (Non-prime attribute must fully depend on candidate key).\n\n4. 3rd Normal Form (3NF):\n- Relation must be in 2NF.\n- No transitive dependency X -> Y where X is not a super key and Y is non-prime attribute.\n\n5. Boyce-Codd Normal Form (BCNF):\n- For every functional dependency X -> Y, X MUST be a Super Key.',
-                'uploaded_by': ayush_user,
+                'uploaded_by': seed_user,
                 'status': 'Approved',
                 'downloads': 142,
                 'is_online_note': True,
@@ -53,7 +46,7 @@ def ensure_default_seed_notes():
                 'semester': 3,
                 'description': 'Quick revision cheatsheet for Trees, Graphs, Dynamic Programming, Sorting algorithms, and Time Complexities.',
                 'content': 'DATA STRUCTURES REVISION GUIDE\n\n1. ARRAY & LINKED LIST:\n- Array Search: O(N) un-sorted, O(log N) binary search.\n- Linked List Insertion at head: O(1).\n\n2. TREES & BST:\n- Binary Search Tree Search: O(H) where H = height.\n- AVL Tree & Red-Black Tree guarantee O(log N) worst case search.\n\n3. GRAPHS:\n- BFS uses Queue data structure (Level order traversal).\n- DFS uses Stack / Recursion.\n- Dijkstra Algorithm for shortest path: O(E log V) with Priority Queue.',
-                'uploaded_by': ayush_user,
+                'uploaded_by': seed_user,
                 'status': 'Approved',
                 'downloads': 210,
                 'is_online_note': True,
@@ -65,7 +58,7 @@ def ensure_default_seed_notes():
                 'semester': 4,
                 'description': 'Detailed notes on CPU Scheduling algorithms (FCFS, SJF, Round Robin), Process States, Semaphores, and Deadlock Prevention.',
                 'content': 'OPERATING SYSTEMS - PROCESS MANAGEMENT\n\n1. PROCESS STATES:\nNew -> Ready -> Running -> Terminated (Wait/Block for I/O).\n\n2. CPU SCHEDULING:\n- FCFS: First Come First Serve (Convoy Effect).\n- Round Robin: Time Quantum based preemptive scheduling.\n- SJF: Shortest Job First (Minimum average waiting time).\n\n3. DEADLOCK CONDITIONS (Coffman Conditions):\n- Mutual Exclusion\n- Hold and Wait\n- No Preemption\n- Circular Wait',
-                'uploaded_by': admin_user,
+                'uploaded_by': seed_user,
                 'status': 'Approved',
                 'downloads': 185,
                 'is_online_note': True,
@@ -77,7 +70,7 @@ def ensure_default_seed_notes():
                 'semester': 5,
                 'description': 'Explanations of Physical, Data Link, Network, Transport, Session, Presentation, and Application layers with TCP/IP protocol mapping.',
                 'content': 'COMPUTER NETWORKS - OSI MODEL\n\n1. Application Layer (HTTP, FTP, SMTP)\n2. Presentation Layer (Encryption, Compression)\n3. Session Layer (Session management, RPC)\n4. Transport Layer (TCP - reliable, UDP - connectionless)\n5. Network Layer (IP addressing, Routing - OSPF, BGP)\n6. Data Link Layer (MAC addressing, Ethernet, Framing)\n7. Physical Layer (Bits, Cables, Signals)',
-                'uploaded_by': ayush_user,
+                'uploaded_by': seed_user,
                 'status': 'Approved',
                 'downloads': 98,
                 'is_online_note': True,
@@ -89,7 +82,7 @@ def ensure_default_seed_notes():
                 'semester': 2,
                 'description': 'Covers Python data structures, decorators, generators, inheritance, polymorphism, and exception handling.',
                 'content': 'PYTHON OOP CHEATSHEET\n\n1. CLASSES & OBJECTS:\nclass Student:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n2. DECORATORS:\ndef my_decorator(func):\n    def wrapper():\n        print("Before function")\n        func()\n        print("After function")\n    return wrapper',
-                'uploaded_by': admin_user,
+                'uploaded_by': seed_user,
                 'status': 'Approved',
                 'downloads': 315,
                 'is_online_note': True,
@@ -104,6 +97,9 @@ def ensure_default_seed_notes():
             if not created and note.status != 'Approved':
                 note.status = 'Approved'
                 note.save()
+
+        # Mark all existing notes in DB as Approved
+        Note.objects.filter(status='Pending').update(status='Approved')
 
     except Exception:
         pass
@@ -167,7 +163,8 @@ def browse_notes(request):
     branch = request.GET.get("branch", "")
     sort = request.GET.get("sort", "newest")
 
-    notes = Note.objects.filter(status="Approved")
+    # Exclude Draft notes from public browse, show Approved and active notes
+    notes = Note.objects.filter(~Q(status="Draft"))
 
     if search:
         notes = notes.filter(
@@ -220,8 +217,6 @@ def browse_notes(request):
 def note_detail(request, pk):
     ensure_default_seed_notes()
     note = get_object_or_404(Note, pk=pk)
-    if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
-        return HttpResponseForbidden("Not allowed to view this note.")
 
     if request.method == "POST":
         comment_text = request.POST.get("comment_text", "").strip()
@@ -356,9 +351,6 @@ def reject_note(request, pk):
 @login_required
 def view_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
-    if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
-        return HttpResponseForbidden("Not allowed.")
-
     if note.file and os.path.exists(note.file.path):
         content_type, _ = mimetypes.guess_type(note.file.path)
         return FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
@@ -369,9 +361,6 @@ def view_note(request, pk):
 @login_required
 def download_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
-    if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
-        return HttpResponseForbidden("Not allowed.")
-
     note.downloads += 1
     note.save()
 
