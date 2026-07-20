@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Create Online E-Note | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card" style="max-width:800px;">
+        <div class="form-card-header">
+            <h2>✍️ Create Online E-Note & Drawing Whiteboard</h2>
+            <p>Type text notes, draw diagrams or formulas with brush & eraser tools, and attach files.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="eNoteForm">
+            {% csrf_token %}
+            {{ form.drawing_data }}
+
+            <div class="form-group">
+                <label>Note Title</label>
+                {{ form.title }}
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                <div class="form-group">
+                    <label>Subject</label>
+                    {{ form.subject }}
+                </div>
+                <div class="form-group">
+                    <label>Branch</label>
+                    {{ form.branch }}
+                </div>
+                <div class="form-group">
+                    <label>Semester</label>
+                    {{ form.semester }}
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Overview Summary</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>Text Content / Formatted Notes</label>
+                {{ form.content }}
+            </div>
+
+            <!-- Interactive Drawing Canvas & Whiteboard Toolbar -->
+            <div class="form-group" style="margin-bottom:24px;">
+                <label style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>🎨 Whiteboard / Diagram Drawing Canvas (Brush, Colors & Eraser)</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Optional handwritten diagrams & math formulas</span>
+                </label>
+
+                <!-- Toolbar Controls -->
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:var(--bg-alt); padding:10px 14px; border-radius:var(--radius-sm) var(--radius-sm) 0 0; border:1px solid var(--border-light); border-bottom:none;">
+                    <!-- Color Swatches -->
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Color:</span>
+                        <button type="button" onclick="setBrushColor('#000000', this)" class="color-btn active" style="background:#000000; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Black"></button>
+                        <button type="button" onclick="setBrushColor('#2563eb', this)" class="color-btn" style="background:#2563eb; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Blue"></button>
+                        <button type="button" onclick="setBrushColor('#ef4444', this)" class="color-btn" style="background:#ef4444; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Red"></button>
+                        <button type="button" onclick="setBrushColor('#10b981', this)" class="color-btn" style="background:#10b981; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Green"></button>
+                        <button type="button" onclick="setBrushColor('#8b5cf6', this)" class="color-btn" style="background:#8b5cf6; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Purple"></button>
+                        <input type="color" id="customColorPicker" onchange="setCustomColor(this.value)" style="width:28px; height:28px; border:none; cursor:pointer; background:none;" title="Custom Color Picker">
+                    </div>
+
+                    <!-- Size Picker -->
+                    <div style="display:flex; gap:6px; align-items:center; margin-left:10px;">
+                        <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Size:</span>
+                        <button type="button" onclick="setBrushSize(2, this)" class="size-btn active btn-sm btn-sm-secondary" style="padding:2px 8px;">Thin</button>
+                        <button type="button" onclick="setBrushSize(5, this)" class="size-btn btn-sm btn-sm-secondary" style="padding:2px 8px;">Medium</button>
+                        <button type="button" onclick="setBrushSize(12, this)" class="size-btn btn-sm btn-sm-secondary" style="padding:2px 8px;">Thick</button>
+                    </div>
+
+                    <!-- Mode Buttons -->
+                    <div style="display:flex; gap:8px; margin-left:auto;">
+                        <button type="button" id="eraserBtn" onclick="toggleEraser()" class="btn-sm btn-sm-secondary">
+                            🧹 Eraser
+                        </button>
+                        <button type="button" onclick="clearCanvas()" class="btn-sm btn-sm-danger">
+                            🗑️ Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- HTML5 Canvas Element -->
+                <div style="width:100%; border:1px solid var(--border-light); border-radius:0 0 var(--radius-sm) var(--radius-sm); background:white; overflow:hidden; touch-action:none;">
+                    <canvas id="drawingCanvas" width="736" height="320" style="display:block; cursor:crosshair; width:100%; background:white;"></canvas>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:24px;">
+                <label>Optional Attachment (Image, PDF, DOCX, PPT, TXT, ZIP)</label>
+                {{ form.file }}
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button type="submit" class="btn-primary" style="flex:1; justify-content:center;">
+                    🚀 Publish & Share E-Note
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn-secondary" style="justify-content:center;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let currentColor = '#000000';
+    let currentSize = 2;
+    let isEraserMode = false;
+    let hasDrawn = false;
+
+    // Fill white background initially
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    function setBrushColor(color, btn) {
+        isEraserMode = false;
+        currentColor = color;
+        ctx.strokeStyle = currentColor;
+        document.getElementById('eraserBtn').classList.remove('btn-sm-primary');
+        document.getElementById('eraserBtn').classList.add('btn-sm-secondary');
+        document.querySelectorAll('.color-btn').forEach(b => b.style.outline = 'none');
+        if (btn) btn.style.outline = '2px solid var(--primary)';
+    }
+
+    function setCustomColor(color) {
+        setBrushColor(color, null);
+    }
+
+    function setBrushSize(size, btn) {
+        currentSize = size;
+        ctx.lineWidth = currentSize;
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('btn-sm-primary'));
+        if (btn) btn.classList.add('btn-sm-primary');
+    }
+
+    function toggleEraser() {
+        isEraserMode = !isEraserMode;
+        const eraserBtn = document.getElementById('eraserBtn');
+        if (isEraserMode) {
+            ctx.strokeStyle = '#ffffff';
+            eraserBtn.classList.remove('btn-sm-secondary');
+            eraserBtn.classList.add('btn-sm-primary');
+        } else {
+            ctx.strokeStyle = currentColor;
+            eraserBtn.classList.remove('btn-sm-primary');
+            eraserBtn.classList.add('btn-sm-secondary');
+        }
+    }
+
+    function clearCanvas() {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        hasDrawn = false;
+    }
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        hasDrawn = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        ctx.closePath();
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    // Capture canvas drawing on form submit
+    document.getElementById('eNoteForm').addEventListener('submit', function() {
+        if (hasDrawn) {
+            const drawingInput = document.getElementById('drawingDataInput');
+            if (drawingInput) {
+                drawingInput.value = canvas.toDataURL('image/png');
+            }
+        }
+    });
+</script>
+
+{% endblock %}

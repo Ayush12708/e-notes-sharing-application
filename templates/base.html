@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NoteHub - Smart E-Notes Platform{% endblock %}</title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Unified Modern Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <span class="logo-icon">📚</span>
+                <span>NoteHub</span>
+            </a>
+        </div>
+
+        <ul class="nav-links">
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'my_notes' %}">My Notes</a></li>
+                <li><a href="{% url 'browse_notes' %}">Browse Notes</a></li>
+                {% if user.is_staff %}
+                    <li><a href="{% url 'admin_dashboard' %}">🛠 Admin Panel</a></li>
+                {% endif %}
+            {% else %}
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'browse_notes' %}">Browse Notes</a></li>
+            {% endif %}
+        </ul>
+
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <div class="user-dropdown-wrapper">
+                    <button type="button" class="user-badge" id="userMenuBtn">
+                        <span class="user-avatar">{{ user.username|first|upper }}</span>
+                        <span>{{ user.first_name|default:user.username }}</span>
+                        <span style="font-size:0.75rem; margin-left:2px; color:var(--text-muted);">▾</span>
+                    </button>
+
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <div class="dropdown-user-header">
+                            <span class="user-avatar">{{ user.username|first|upper }}</span>
+                            <div class="dropdown-user-info">
+                                <strong>{{ user.first_name|default:user.username }} {{ user.last_name }}</strong>
+                                <span>@{{ user.username }}</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'profile' %}" class="dropdown-item">
+                            👤 View & Edit Profile
+                        </a>
+                        <a href="{% url 'my_notes' %}" class="dropdown-item">
+                            📄 My Notes
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="dropdown-item">
+                            🏠 Dashboard
+                        </a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin_dashboard' %}" class="dropdown-item">
+                            🛠 Admin Panel
+                        </a>
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'logout' %}" class="dropdown-item danger">
+                            🚪 Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-secondary">Login</a>
+                <a href="{% url 'register' %}" class="btn-primary">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+        {% if messages %}
+        <div style="max-width:1300px; margin:20px auto 0 auto; padding:0 5%;">
+            {% for message in messages %}
+            <div class="status-pill {% if message.tags == 'error' %}rejected{% else %}approved{% endif %}" style="display:block; padding:12px 20px; font-size:0.92rem; margin-bottom:12px; text-align:center;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-brand">
+            <span>📚</span> NoteHub
+        </div>
+        <p>A modern e-notes sharing platform built for students and educators to collaborate and excel together.</p>
+        <div class="copyright">
+            © 2026 NoteHub. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+            if (userMenuBtn && userDropdownMenu) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdownMenu.classList.toggle('show');
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!userDropdownMenu.contains(e.target) && !userMenuBtn.contains(e.target)) {
+                        userDropdownMenu.classList.remove('show');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

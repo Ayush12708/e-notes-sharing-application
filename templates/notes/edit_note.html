@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Note | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card">
+        <div class="form-card-header">
+            <h2>✏ Edit Note Details</h2>
+            <p>Update your note title, subject, semester, or replacement file.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div style="display:flex; gap:12px; margin-top:20px;">
+                <button type="submit" class="btn-primary" style="flex:1; justify-content:center;">
+                    Save Changes
+                </button>
+                <a href="{% url 'my_notes' %}" class="btn-secondary" style="justify-content:center;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}NoteHub - Learn Smarter, Share Knowledge{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-left">
+        <span class="hero-badge">
+            🚀 Smart E-Notes Sharing Platform
+        </span>
+        <h1>
+            Learn Smarter.<br>
+            <span>Share Knowledge.</span><br>
+            Grow Together.
+        </h1>
+        <p>
+            Upload your course notes, browse high-quality study materials, organize subjects, and help thousands of students learn faster from one central hub.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{% url 'upload_note' %}" class="btn-primary">
+                📤 Create & Upload Notes
+            </a>
+            <a href="#about-section" class="btn-secondary">
+                📖 About NoteHub
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <div class="hero-card">
+            <div class="hero-card-header">
+                <h3>📚 Live Platform Stats</h3>
+                <span class="status-pill approved">Active</span>
+            </div>
+            <div class="stats-grid-mini">
+                <div class="mini-stat">
+                    <span>Total Notes</span>
+                    <strong>{{ total_notes_count|default:"520+" }}</strong>
+                </div>
+                <div class="mini-stat">
+                    <span>Downloads</span>
+                    <strong>8.2k+</strong>
+                </div>
+                <div class="mini-stat">
+                    <span>Subjects</span>
+                    <strong>40+</strong>
+                </div>
+                <div class="mini-stat">
+                    <span>Students</span>
+                    <strong>1.2k+</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 📖 About NoteHub Section -->
+<section id="about-section" style="padding:70px 0; background:white; border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light);">
+    <div class="dashboard-wrapper">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:50px; align-items:center;">
+
+            <!-- About Left: Story & Mission -->
+            <div>
+                <span class="hero-badge" style="margin-bottom:16px;">📖 About NoteHub</span>
+                <h2 style="font-size:2.2rem; color:var(--text-dark); margin-bottom:16px; line-height:1.3; font-weight:700;">
+                    Empowering Students to Excel Together Through Knowledge Sharing
+                </h2>
+                <p style="font-size:1.02rem; color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+                    NoteHub is an all-in-one digital learning and study material sharing platform created for college students. We eliminate the frustration of hunting for quality notes before exams by providing a central, peer-to-peer library of verified study guides, handwritten notes, and lecture materials.
+                </p>
+
+                <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
+                    <div style="display:flex; gap:14px; align-items:flex-start;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:#e0e7ff; color:var(--primary); font-size:1.1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:700;">✓</div>
+                        <div>
+                            <strong style="font-size:1rem; color:var(--text-dark); display:block; margin-bottom:2px;">Built-in Digital E-Note & Whiteboard Canvas</strong>
+                            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">Type formatted notes, sketch handwritten diagrams with paint brush & eraser tools, or attach document files in one unified workspace.</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:14px; align-items:flex-start;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:#e0e7ff; color:var(--primary); font-size:1.1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:700;">✓</div>
+                        <div>
+                            <strong style="font-size:1rem; color:var(--text-dark); display:block; margin-bottom:2px;">Multi-Branch & Semester Categorization</strong>
+                            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">Filter notes by Computer Science, IT, ECE, Mechanical, Civil, BCA/MCA, Commerce, and Semesters 1 through 8.</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:14px; align-items:flex-start;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:#e0e7ff; color:var(--primary); font-size:1.1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:700;">✓</div>
+                        <div>
+                            <strong style="font-size:1rem; color:var(--text-dark); display:block; margin-bottom:2px;">Community Discussion & Instant Bookmarks</strong>
+                            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">Engage in student discussions, ask questions on notes, save bookmarks for revision, and upvote quality notes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn-primary" style="padding:12px 28px;">
+                    🚀 Join the NoteHub Community
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- About Right: 3-Step Workflow Cards -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <div class="content-card" style="padding:24px; border-left:4px solid var(--primary);">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <span style="background:var(--accent-gradient); color:white; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">1</span>
+                        <h3 style="font-size:1.1rem; color:var(--text-dark);">Sign Up & Set Academic Profile</h3>
+                    </div>
+                    <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5; padding-left:44px;">
+                        Create your free student account, select your college or university, branch, and semester to customize your study feed.
+                    </p>
+                </div>
+
+                <div class="content-card" style="padding:24px; border-left:4px solid #10b981;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <span style="background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:white; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">2</span>
+                        <h3 style="font-size:1.1rem; color:var(--text-dark);">Explore or Create E-Notes</h3>
+                    </div>
+                    <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5; padding-left:44px;">
+                        Browse verified notes across core subjects or use our unified creation studio to type text notes, draw diagrams, or upload files.
+                    </p>
+                </div>
+
+                <div class="content-card" style="padding:24px; border-left:4px solid #8b5cf6;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <span style="background:linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color:white; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">3</span>
+                        <h3 style="font-size:1.1rem; color:var(--text-dark);">Revise & Excel in Semester Exams</h3>
+                    </div>
+                    <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5; padding-left:44px;">
+                        Bookmark essential materials, download offline notes, participate in comment discussions, and score higher marks in your exams.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 🔥 Trending Course Notes & Study Materials Preview Section -->
+<section id="trending-section" style="padding:60px 0; background:var(--bg-main); border-bottom:1px solid var(--border-light);">
+    <div class="dashboard-wrapper">
+        <div class="section-title" style="margin-bottom:30px; text-align:center;">
+            <h2>🔥 Trending Course Notes Preview</h2>
+            <p>Explore top-rated study guides, lecture notes, and university syllabus materials.</p>
+            {% if not user.is_authenticated %}
+            <div style="display:inline-flex; align-items:center; gap:8px; background:#fffbe6; color:#856404; padding:8px 18px; border-radius:var(--radius-full); border:1px solid #ffeeba; margin-top:10px; font-size:0.88rem; font-weight:500;">
+                🔒 Full document viewing and downloading requires logging in or creating a free account.
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px;">
+            {% for note in trending_notes %}
+            <div class="content-card" style="padding:26px; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                        <span class="user-badge">{{ note.subject }}</span>
+                        <span class="status-pill approved" style="font-size:0.75rem;">{{ note.get_branch_display }}</span>
+                    </div>
+
+                    <h3 style="font-size:1.15rem; color:var(--text-dark); margin-bottom:8px;">
+                        {{ note.title }}
+                    </h3>
+
+                    {% if note.description %}
+                    <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.5; margin-bottom:16px;">
+                        {{ note.description|truncatewords:12 }}
+                    </p>
+                    {% else %}
+                    <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.5; margin-bottom:16px;">
+                        Verified course study material for Semester {{ note.semester }}.
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div style="border-top:1px solid var(--border-light); padding-top:16px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-size:0.82rem; color:var(--text-muted);">
+                        <span>Sem {{ note.semester }}</span> •
+                        <strong>⬇ {{ note.downloads }} downloads</strong>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
+                        👁 View Details
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}?next={% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary" style="background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                        🔒 Unlock Document
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="content-card" style="padding:40px; text-align:center; grid-column:1/-1;">
+                <p style="color:var(--text-muted);">No notes uploaded yet. Be the first to share notes!</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not user.is_authenticated %}
+        <div style="text-align:center; margin-top:36px;">
+            <a href="{% url 'register' %}" class="btn-primary" style="padding:12px 32px; font-size:1rem;">
+                ✨ Create Free Account to Access All Notes
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Trusted Universities Section -->
+<section class="trusted-section">
+    <h3>Trusted by Students Across Top Universities</h3>
+    <div class="trusted-grid">
+        <div class="uni-card">
+            <h4>LPU</h4>
+            <p>Lovely Professional Univ.</p>
+        </div>
+        <div class="uni-card">
+            <h4>CU</h4>
+            <p>Chandigarh University</p>
+        </div>
+        <div class="uni-card">
+            <h4>AMITY</h4>
+            <p>Amity University</p>
+        </div>
+        <div class="uni-card">
+            <h4>MANIPAL</h4>
+            <p>Manipal University</p>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="section-title">
+        <h2>Everything You Need to Excel</h2>
+        <p>Comprehensive features designed to make sharing and discovering notes seamless.</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📤</div>
+            <h3>Upload & Draw Notes</h3>
+            <p>Upload PDFs, PPTs, or type formatted text notes and draw whiteboard diagrams directly on the site.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Smart Search</h3>
+            <p>Instant search and multi-criteria filters to locate exact subjects, semesters, or topics.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📥</div>
+            <h3>Instant Access</h3>
+            <p>High-speed direct access and inline previews from any smartphone, tablet, or laptop device.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Verified Content</h3>
+            <p>Curated admin verification workflow ensuring only quality study material reaches students.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Banner -->
+<section class="stats-banner">
+    <div class="stats-banner-grid">
+        <div class="stat-item">
+            <h2>{{ total_notes_count|default:"500+" }}</h2>
+            <p>Study Notes</p>
+        </div>
+        <div class="stat-item">
+            <h2>40+</h2>
+            <p>Academic Subjects</p>
+        </div>
+        <div class="stat-item">
+            <h2>1,200+</h2>
+            <p>Active Students</p>
+        </div>
+        <div class="stat-item">
+            <h2>8,000+</h2>
+            <p>Total Downloads</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

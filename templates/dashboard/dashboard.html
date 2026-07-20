@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Study Materials Hub | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div>
+            <h1>📚 Study Materials Dashboard</h1>
+            <p>Discover top-rated notes, explore subjects, and access verified course materials.</p>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="{% url 'create_online_note' %}" class="btn-primary">
+                ✍️ Create Online E-Note
+            </a>
+            <a href="{% url 'upload_note' %}" class="btn-secondary">
+                📤 Upload File Notes
+            </a>
+            <a href="{% url 'browse_notes' %}" class="btn-secondary">
+                🔍 Browse All Notes
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Platform & Personal Activity Metrics -->
+    <div class="dashboard-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom:40px;">
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>My Uploads</span>
+                <h2>{{ total_notes }}</h2>
+            </div>
+            <div class="stat-icon total">📄</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>Saved Bookmarks</span>
+                <h2>{{ total_bookmarks }}</h2>
+            </div>
+            <div class="stat-icon approved">💖</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>Total Downloads</span>
+                <h2>{{ total_downloads }}</h2>
+            </div>
+            <div class="stat-icon total">⬇</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>Pending Review</span>
+                <h2>{{ pending_count }}</h2>
+            </div>
+            <div class="stat-icon pending">⏳</div>
+        </div>
+    </div>
+
+    <!-- Subject Category Cards -->
+    <div style="margin-bottom:40px;">
+        <div class="section-title" style="margin-bottom:24px; text-align:left;">
+            <h2 style="font-size:1.5rem; color:var(--text-dark);">🏷️ Explore Study Materials by Subject</h2>
+            <p style="font-size:0.95rem; color:var(--text-muted);">Quickly jump into verified notes for core academic subjects.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:18px;">
+            {% for subj in subjects_list %}
+            <a href="{% url 'browse_notes' %}?subject={{ subj.code }}" class="content-card" style="padding:20px; text-decoration:none; display:block; transition:var(--transition-normal);">
+                <div style="font-size:2rem; margin-bottom:10px;">{{ subj.icon }}</div>
+                <h3 style="font-size:1.05rem; color:var(--text-dark); margin-bottom:4px;">{{ subj.name }}</h3>
+                <span style="font-size:0.85rem; color:var(--primary); font-weight:600;">{{ subj.count }} Notes Available →</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Popular & Trending Study Notes -->
+    <div style="margin-bottom:40px;">
+        <div class="section-title" style="margin-bottom:24px; text-align:left; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 style="font-size:1.5rem; color:var(--text-dark);">🔥 Trending & Popular Study Guides</h2>
+                <p style="font-size:0.95rem; color:var(--text-muted);">Most downloaded and highly rated study materials across universities.</p>
+            </div>
+            <a href="{% url 'browse_notes' %}?sort=popular" class="btn-sm btn-sm-secondary">View Popular List →</a>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+            {% for note in popular_notes %}
+            <div class="content-card" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span class="user-badge">{{ note.subject }}</span>
+                        <span class="status-pill approved" style="font-size:0.75rem;">{{ note.get_branch_display }}</span>
+                    </div>
+
+                    <h3 style="font-size:1.15rem; color:var(--text-dark); margin-bottom:8px;">
+                        <a href="{% url 'note_detail' note.id %}" style="text-decoration:none; color:var(--text-dark);">
+                            {{ note.title }}
+                        </a>
+                    </h3>
+
+                    {% if note.description %}
+                    <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.5; margin-bottom:16px;">
+                        {{ note.description|truncatewords:10 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div style="border-top:1px solid var(--border-light); padding-top:14px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.82rem; color:var(--text-muted);">
+                        By <strong>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</strong>
+                    </span>
+
+                    <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
+                        👁 Details & View
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="content-card" style="padding:30px; text-align:center; grid-column: 1 / -1;">
+                <p style="color:var(--text-muted);">No study notes available yet. Be the first to share notes!</p>
+                <a href="{% url 'upload_note' %}" class="btn-primary" style="margin-top:12px;">Upload Notes</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Freshly Uploaded Community Materials & Bookmarks Row -->
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px; align-items:start;">
+
+        <!-- Left Column: Recent Community Submissions -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <h2>✨ Freshly Uploaded Study Materials</h2>
+                <a href="{% url 'browse_notes' %}" class="btn-sm btn-sm-secondary">Explore All Notes →</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Subject</th>
+                            <th>Semester</th>
+                            <th>Uploaded By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in recent_community_notes %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'note_detail' note.id %}" style="text-decoration:none;">
+                                    <strong style="color:var(--primary);">{{ note.title }}</strong>
+                                </a>
+                            </td>
+                            <td><span class="user-badge">{{ note.subject }}</span></td>
+                            <td>Semester {{ note.semester }}</td>
+                            <td>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</td>
+                            <td>
+                                <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
+                                    👁 Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <p>No community notes uploaded recently.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right Column: My Bookmarks & Shortcuts -->
+        <div>
+            <div class="content-card" style="padding:20px; margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3 style="font-size:1.05rem; color:var(--text-dark);">💖 Saved Bookmarks</h3>
+                    <a href="{% url 'bookmarks' %}" style="font-size:0.82rem; color:var(--primary); font-weight:600;">View All →</a>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    {% for bookmark in user_bookmarks %}
+                    <div style="background:var(--bg-main); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="display:block; font-size:0.88rem; color:var(--text-dark);">{{ bookmark.note.title|truncatechars:20 }}</strong>
+                            <span style="font-size:0.78rem; color:var(--text-muted);">{{ bookmark.note.subject }}</span>
+                        </div>
+                        <a href="{% url 'note_detail' bookmark.note.id %}" class="btn-sm btn-sm-secondary" style="font-size:0.78rem; padding:4px 10px;">
+                            View
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state" style="padding:16px;">
+                        <p style="font-size:0.85rem;">No bookmarked notes yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Quick Shortcuts Panel -->
+            <div class="content-card" style="padding:20px;">
+                <h3 style="font-size:1.05rem; color:var(--text-dark); margin-bottom:14px;">⚡ Quick Navigation</h3>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <a href="{% url 'browse_notes' %}" class="btn-sm btn-sm-primary" style="padding:10px 14px; justify-content:flex-start;">
+                        🔍 Search All Study Materials
+                    </a>
+                    <a href="{% url 'upload_note' %}" class="btn-sm btn-sm-secondary" style="padding:10px 14px; justify-content:flex-start;">
+                        📤 Share Study Notes
+                    </a>
+                    <a href="{% url 'my_notes' %}" class="btn-sm btn-sm-secondary" style="padding:10px 14px; justify-content:flex-start;">
+                        📄 My Uploaded Notes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Note | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card" style="max-width:440px; text-align:center;">
+        <div class="form-card-header">
+            <div style="font-size:3rem; margin-bottom:12px;">🗑</div>
+            <h2>Confirm Deletion</h2>
+            <p style="margin-top:10px;">Are you sure you want to permanently delete <strong>"{{ note.title }}"</strong>? This action cannot be undone.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div style="display:flex; gap:12px; margin-top:24px;">
+                <button type="submit" class="btn-primary" style="background:#be123c; flex:1; justify-content:center;">
+                    Yes, Delete
+                </button>
+                <a href="{% url 'my_notes' %}" class="btn-secondary" style="flex:1; justify-content:center;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

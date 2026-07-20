@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Bookmarks | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>💖 Saved Bookmarks</h1>
+            <p>Your saved study notes for quick revision and access.</p>
+        </div>
+        <div>
+            <a href="{% url 'browse_notes' %}" class="btn-primary">
+                🔍 Discover More Notes
+            </a>
+        </div>
+    </div>
+
+    <!-- Notes Data Table -->
+    <div class="content-card">
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Branch</th>
+                        <th>Semester</th>
+                        <th>Uploaded By</th>
+                        <th>Downloads</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'note_detail' note.id %}" style="text-decoration:none; color:var(--text-dark);">
+                                <strong style="color:var(--primary);">{{ note.title }}</strong>
+                            </a>
+                        </td>
+                        <td><span class="user-badge">{{ note.subject }}</span></td>
+                        <td>{{ note.get_branch_display|default:note.branch }}</td>
+                        <td>Semester {{ note.semester }}</td>
+                        <td>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</td>
+                        <td>{{ note.downloads }}</td>
+                        <td>
+                            <div class="action-group">
+                                <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-danger" title="Remove Bookmark">
+                                    💔 Remove
+                                </a>
+                                <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
+                                    👁 Details & View
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">💖</div>
+                                <p>You haven't bookmarked any notes yet.</p>
+                                <a href="{% url 'browse_notes' %}" class="btn-primary" style="margin-top:14px;">Browse Notes & Add Bookmarks</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

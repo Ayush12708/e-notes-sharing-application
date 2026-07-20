@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Browse Notes | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>📚 Browse Study Notes</h1>
+            <p>Search, filter, bookmark, and explore verified notes uploaded by fellow students.</p>
+        </div>
+        {% if user.is_authenticated %}
+        <div>
+            <a href="{% url 'upload_note' %}" class="btn-primary">
+                + Upload Notes
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="filter-card">
+        <form method="GET" class="filter-form" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;">
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                class="form-control"
+                placeholder="🔍 Search title, subject, branch..."
+            >
+
+            <select name="branch" class="form-control">
+                <option value="">All Branches</option>
+                <option value="CSE" {% if branch == "CSE" %}selected{% endif %}>Computer Science</option>
+                <option value="IT" {% if branch == "IT" %}selected{% endif %}>Information Tech</option>
+                <option value="ECE" {% if branch == "ECE" %}selected{% endif %}>Electronics & Comm.</option>
+                <option value="ME" {% if branch == "ME" %}selected{% endif %}>Mechanical Engg.</option>
+                <option value="CIVIL" {% if branch == "CIVIL" %}selected{% endif %}>Civil Engg.</option>
+                <option value="BCA_MCA" {% if branch == "BCA_MCA" %}selected{% endif %}>BCA / MCA</option>
+            </select>
+
+            <select name="subject" class="form-control">
+                <option value="">All Subjects</option>
+                <option value="DBMS" {% if subject == "DBMS" %}selected{% endif %}>DBMS</option>
+                <option value="DSA" {% if subject == "DSA" %}selected{% endif %}>DSA</option>
+                <option value="OS" {% if subject == "OS" %}selected{% endif %}>Operating System</option>
+                <option value="CN" {% if subject == "CN" %}selected{% endif %}>Computer Networks</option>
+                <option value="CC" {% if subject == "CC" %}selected{% endif %}>Cloud Computing</option>
+                <option value="JAVA" {% if subject == "JAVA" %}selected{% endif %}>Java</option>
+                <option value="PYTHON" {% if subject == "PYTHON" %}selected{% endif %}>Python</option>
+                <option value="MATH" {% if subject == "MATH" %}selected{% endif %}>Mathematics</option>
+            </select>
+
+            <select name="semester" class="form-control">
+                <option value="">All Semesters</option>
+                {% for i in "12345678" %}
+                <option value="{{ forloop.counter }}"
+                    {% if semester == forloop.counter|stringformat:"s" %}selected{% endif %}>
+                    Semester {{ forloop.counter }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <select name="sort" class="form-control">
+                <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest First</option>
+                <option value="popular" {% if sort == "popular" %}selected{% endif %}>Most Downloaded</option>
+                <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>Oldest First</option>
+                <option value="az" {% if sort == "az" %}selected{% endif %}>Title A-Z</option>
+            </select>
+
+            <button type="submit" class="btn-primary">Filter</button>
+        </form>
+    </div>
+
+    <!-- Notes Data Table -->
+    <div class="content-card">
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject & Branch</th>
+                        <th>Semester</th>
+                        <th>Uploaded By</th>
+                        <th>Likes & Downloads</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'note_detail' note.id %}" style="text-decoration:none; color:var(--text-dark);">
+                                <strong style="color:var(--primary);">{{ note.title }}</strong>
+                            </a>
+                            {% if note.description %}
+                            <p style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">{{ note.description|truncatewords:8 }}</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="user-badge">{{ note.subject }}</span>
+                            <span style="display:block; font-size:0.78rem; color:var(--text-muted); margin-top:2px;">{{ note.get_branch_display }}</span>
+                        </td>
+                        <td>Semester {{ note.semester }}</td>
+                        <td>
+                            {{ note.uploaded_by.first_name|default:note.uploaded_by.username }}
+                        </td>
+                        <td>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <a href="{% url 'toggle_like' note.id %}" style="text-decoration:none; font-size:0.85rem;" title="Like Note">
+                                    {% if request.user in note.likes.all %}👍{% else %}🤍{% endif %} {{ note.total_likes }}
+                                </a>
+                                <span style="font-size:0.85rem; color:var(--text-muted);">⬇ {{ note.downloads }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-secondary" title="Save Bookmark">
+                                    {% if note.id in user_bookmarked_ids %}💖 Saved{% else %}❤️ Bookmark{% endif %}
+                                </a>
+                                <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
+                                    👁 Details & View
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🔍</div>
+                                <p>No notes found matching your criteria.</p>
+                                <a href="{% url 'browse_notes' %}" class="btn-secondary" style="margin-top:14px;">Reset Filters</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

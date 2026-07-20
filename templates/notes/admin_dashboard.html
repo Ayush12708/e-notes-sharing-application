@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>🛠 Admin Moderation Panel</h1>
+            <p>Review student submissions and manage note approval requests.</p>
+        </div>
+    </div>
+
+    <!-- Admin Metrics Cards -->
+    <div class="dashboard-cards-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>Pending Review</span>
+                <h2>{{ pending }}</h2>
+            </div>
+            <div class="stat-icon pending">⏳</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>Approved Notes</span>
+                <h2>{{ approved }}</h2>
+            </div>
+            <div class="stat-icon approved">✔</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <span>Rejected Notes</span>
+                <h2>{{ rejected }}</h2>
+            </div>
+            <div class="stat-icon rejected">✖</div>
+        </div>
+    </div>
+
+    <!-- Moderation Table -->
+    <div class="content-card">
+        <div class="content-card-header">
+            <h2>📄 Note Submissions</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                    <tr>
+                        <td><strong>{{ note.title }}</strong></td>
+                        <td>{{ note.uploaded_by.username }}</td>
+                        <td>{{ note.subject }}</td>
+                        <td>Semester {{ note.semester }}</td>
+                        <td>
+                            {% if note.status == "Approved" %}
+                                <span class="status-pill approved">✔ Approved</span>
+                            {% elif note.status == "Pending" %}
+                                <span class="status-pill pending">⏳ Pending</span>
+                            {% else %}
+                                <span class="status-pill rejected">✖ Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if note.status == "Pending" %}
+                            <div class="action-group">
+                                <a href="{% url 'approve_note' note.id %}" class="btn-sm btn-sm-primary">
+                                    ✔ Approve
+                                </a>
+                                <a href="{% url 'reject_note' note.id %}" class="btn-sm btn-sm-danger">
+                                    ✖ Reject
+                                </a>
+                            </div>
+                            {% elif note.status == "Approved" %}
+                                <span class="status-pill approved">Approved</span>
+                            {% else %}
+                                <span class="status-pill rejected">Rejected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <p>No note submissions found.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

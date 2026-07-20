@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>👤 My Profile</h1>
+            <p>View and manage your account details, username, personal information, and academic info.</p>
+        </div>
+        <div>
+            <a href="{% url 'dashboard' %}" class="btn-secondary">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    {% if success_msg %}
+    <div class="status-pill approved" style="display:block; padding:12px 20px; font-size:0.95rem; margin-bottom:24px; text-align:center;">
+        ✔ Your profile details and username have been updated successfully!
+    </div>
+    {% endif %}
+
+    {% if u_form.errors or p_form.errors %}
+    <div class="status-pill rejected" style="display:block; padding:12px 20px; font-size:0.95rem; margin-bottom:24px;">
+        {% for field, errors in u_form.errors.items %}
+            {% for error in errors %}
+                <p>⚠️ {{ field|title }}: {{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% for field, errors in p_form.errors.items %}
+            {% for error in errors %}
+                <p>⚠️ {{ field|title }}: {{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:30px; align-items:start;">
+
+        <!-- Left Column: User Summary Card -->
+        <div class="content-card" style="padding:30px; text-align:center;">
+            <div style="width:80px; height:80px; border-radius:50%; background:var(--accent-gradient); color:white; font-size:2.2rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; margin-bottom:16px; box-shadow:var(--shadow-md);">
+                {{ request.user.username|first|upper }}
+            </div>
+
+            <h2 style="font-size:1.4rem; color:var(--text-dark); margin-bottom:4px;">
+                {{ request.user.first_name|default:request.user.username }} {{ request.user.last_name }}
+            </h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:16px;">@{{ request.user.username }}</p>
+
+            <span class="status-pill approved" style="margin-bottom:24px;">Student Account</span>
+
+            <div style="border-top:1px solid var(--border-light); padding-top:20px; text-align:left; font-size:0.9rem;">
+                <div style="margin-bottom:12px;">
+                    <span style="color:var(--text-muted); display:block; font-size:0.8rem;">Username</span>
+                    <strong>@{{ request.user.username }}</strong>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <span style="color:var(--text-muted); display:block; font-size:0.8rem;">College / University</span>
+                    <strong>{{ profile.college|default:"Not specified" }}</strong>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <span style="color:var(--text-muted); display:block; font-size:0.8rem;">Semester</span>
+                    <strong>Semester {{ profile.semester|default:"1" }}</strong>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <span style="color:var(--text-muted); display:block; font-size:0.8rem;">Email</span>
+                    <strong>{{ request.user.email|default:"Not specified" }}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--text-muted); display:block; font-size:0.8rem;">Phone Number</span>
+                    <strong>{{ profile.phone|default:"Not specified" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Edit Profile Form -->
+        <div class="content-card" style="padding:32px;">
+            <div style="margin-bottom:24px; padding-bottom:14px; border-bottom:1px solid var(--border-light);">
+                <h2 style="font-size:1.3rem; color:var(--text-dark); font-weight:600;">✏ Edit Profile Details</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem;">Update your username, personal information, and academic credentials below.</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Username</label>
+                    {{ u_form.username }}
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        {{ u_form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        {{ u_form.last_name }}
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Email Address</label>
+                    {{ u_form.email }}
+                </div>
+
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Phone Number</label>
+                    {{ p_form.phone }}
+                </div>
+
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:16px; margin-bottom:24px;">
+                    <div class="form-group">
+                        <label>College / University Name</label>
+                        {{ p_form.college }}
+                    </div>
+                    <div class="form-group">
+                        <label>Semester</label>
+                        {{ p_form.semester }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="padding:12px 28px;">
+                    💾 Save Profile Changes
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

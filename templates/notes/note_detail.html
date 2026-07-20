@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}{{ note.title }} | NoteHub{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- Back & Navigation Header -->
+    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
+        <a href="{% url 'browse_notes' %}" class="btn-secondary" style="font-size:0.88rem; padding:6px 14px;">
+            ← Back to Browse Notes
+        </a>
+
+        <!-- Copy Share Link Button -->
+        <button type="button" onclick="copyShareLink()" class="btn-sm btn-sm-secondary" id="shareBtn" style="padding:8px 16px; font-size:0.9rem; cursor:pointer;">
+            📋 Copy Shareable Link
+        </button>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px; align-items:start;">
+
+        <!-- Main Content Column -->
+        <div>
+            <!-- Note Header & Action Card -->
+            <div class="content-card" style="padding:30px; margin-bottom:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+                    <div>
+                        <h1 style="font-size:1.8rem; color:var(--text-dark); margin-bottom:8px;">{{ note.title }}</h1>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                            <span class="user-badge">{{ note.subject }}</span>
+                            <span class="status-pill approved">{{ note.get_branch_display }}</span>
+                            <span style="font-size:0.88rem; color:var(--text-muted);">Semester {{ note.semester }}</span>
+                            {% if note.is_online_note %}
+                            <span class="status-pill approved" style="background:#e0e7ff; color:#4f46e5;">✍️ Web E-Note</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-group">
+                        <a href="{% url 'toggle_like' note.id %}" class="btn-sm btn-sm-secondary" style="padding:8px 16px; font-size:0.9rem;">
+                            {% if is_liked %}👍 Liked{% else %}🤍 Like{% endif %} ({{ note.total_likes }})
+                        </a>
+                        <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-secondary" style="padding:8px 16px; font-size:0.9rem;">
+                            {% if is_bookmarked %}💖 Saved{% else %}❤️ Bookmark{% endif %}
+                        </a>
+                        {% if note.file %}
+                        <a href="{% url 'download_note' note.id %}" class="btn-primary" style="padding:9px 22px;">
+                            ⬇ Download File
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if note.description %}
+                <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-light); margin-top:20px;">
+                    <strong style="display:block; font-size:0.88rem; color:var(--text-muted); margin-bottom:4px;">Overview / Description</strong>
+                    <p style="font-size:0.95rem; color:var(--text-dark); line-height:1.6;">{{ note.description }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Whiteboard Diagram / Handwritten Drawing (If present) -->
+            {% if note.drawing_data %}
+            <div class="content-card" style="padding:24px; margin-bottom:28px;">
+                <div style="margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border-light);">
+                    <h3 style="font-size:1.15rem; color:var(--text-dark); font-weight:600;">🎨 Whiteboard Diagram & Handwritten Notes</h3>
+                </div>
+                <div style="text-align:center; background:#ffffff; padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-light); overflow:hidden;">
+                    <img src="{{ note.drawing_data }}" alt="Whiteboard Diagram" style="max-width:100%; height:auto; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Online E-Note Formatted Text Content (If Web Note) -->
+            {% if note.content %}
+            <div class="content-card" style="padding:32px; margin-bottom:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border-light);">
+                    <h3 style="font-size:1.2rem; color:var(--text-dark); font-weight:600;">✍️ Online Formatted E-Note</h3>
+                    <button onclick="copyNoteText()" class="btn-sm btn-sm-secondary">📋 Copy Note Text</button>
+                </div>
+                <div id="eNoteContentText" style="font-size:1.02rem; color:var(--text-dark); line-height:1.8; white-space:pre-wrap; font-family:'Poppins', sans-serif;">{{ note.content }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Document Preview & Download Card (If File Uploaded) -->
+            {% if note.file %}
+            <div class="content-card" style="padding:24px; margin-bottom:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+                    <h3 style="font-size:1.1rem; color:var(--text-dark);">📄 Document File Preview</h3>
+                    <div style="display:flex; gap:10px;">
+                        <a href="{% url 'view_note' note.id %}" class="btn-sm btn-sm-secondary" target="_blank">
+                            ↗ Open Fullscreen
+                        </a>
+                        <a href="{% url 'download_note' note.id %}" class="btn-sm btn-sm-primary">
+                            ⬇ Download Note File
+                        </a>
+                    </div>
+                </div>
+
+                <div style="width:100%; height:580px; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-light); background:#f8fafc;">
+                    <iframe src="{% url 'view_note' note.id %}" width="100%" height="100%" style="border:none;">
+                        <div class="empty-state" style="padding:60px 20px;">
+                            <div class="empty-state-icon">📄</div>
+                            <p style="margin-bottom:16px;">Click below to download and view the course notes file.</p>
+                            <a href="{% url 'download_note' note.id %}" class="btn-primary">⬇ Download Note File</a>
+                        </div>
+                    </iframe>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Student Discussion & Comments Section -->
+            <div class="content-card" style="padding:30px;">
+                <h2 style="font-size:1.3rem; color:var(--text-dark); margin-bottom:20px;">💬 Student Discussion ({{ comments.count }})</h2>
+
+                <!-- Comment Input Form -->
+                <form method="POST" style="margin-bottom:32px;">
+                    {% csrf_token %}
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <textarea
+                            name="comment_text"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Ask a question or share feedback about these notes..."
+                            required
+                        ></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="padding:8px 20px;">
+                        Post Comment
+                    </button>
+                </form>
+
+                <!-- Comments Thread -->
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    {% for comment in comments %}
+                    <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-light);">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                            <div class="user-avatar" style="width:28px; height:28px; font-size:0.8rem;">
+                                {{ comment.user.username|first|upper }}
+                            </div>
+                            <strong style="font-size:0.9rem; color:var(--text-dark);">
+                                {{ comment.user.first_name|default:comment.user.username }}
+                            </strong>
+                            <span style="font-size:0.78rem; color:var(--text-muted);">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                        </div>
+                        <p style="font-size:0.92rem; color:var(--text-dark); padding-left:38px; line-height:1.5;">
+                            {{ comment.text }}
+                        </p>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state" style="padding:24px;">
+                        <p>No comments yet. Be the first to start the discussion!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Info Column -->
+        <div>
+            <!-- Uploader Profile & Download Card -->
+            <div class="content-card" style="padding:24px; text-align:center;">
+                <strong style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); display:block; margin-bottom:16px;">Uploaded By</strong>
+                <div style="width:64px; height:64px; border-radius:50%; background:var(--accent-gradient); color:white; font-size:1.8rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                    {{ note.uploaded_by.username|first|upper }}
+                </div>
+                <h3 style="font-size:1.1rem; color:var(--text-dark); margin-bottom:2px;">
+                    {{ note.uploaded_by.first_name|default:note.uploaded_by.username }} {{ note.uploaded_by.last_name }}
+                </h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">@{{ note.uploaded_by.username }}</p>
+
+                <div style="border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:16px 0; margin-bottom:20px; text-align:left; font-size:0.88rem;">
+                    <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
+                        <span style="color:var(--text-muted);">Uploaded Date</span>
+                        <strong>{{ note.uploaded_at|date:"d M Y" }}</strong>
+                    </div>
+                    <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
+                        <span style="color:var(--text-muted);">Status</span>
+                        <span class="status-pill approved">✔ Verified</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:var(--text-muted);">Total Downloads</span>
+                        <strong>{{ note.downloads }}</strong>
+                    </div>
+                </div>
+
+                {% if note.file %}
+                <a href="{% url 'download_note' note.id %}" class="btn-primary" style="width:100%; justify-content:center;">
+                    ⬇ Download Note File
+                </a>
+                {% else %}
+                <button type="button" onclick="copyShareLink()" class="btn-primary" style="width:100%; justify-content:center;">
+                    🔗 Share Note Link
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function copyShareLink() {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            const shareBtn = document.getElementById('shareBtn');
+            if (shareBtn) {
+                shareBtn.innerText = '✔ Link Copied!';
+                setTimeout(() => { shareBtn.innerText = '📋 Copy Shareable Link'; }, 2500);
+            }
+        });
+    }
+
+    function copyNoteText() {
+        const textElement = document.getElementById('eNoteContentText');
+        if (textElement) {
+            navigator.clipboard.writeText(textElement.innerText).then(function() {
+                alert('E-Note text copied to clipboard!');
+            });
+        }
+    }
+</script>
+
+{% endblock %}
