@@ -12,13 +12,10 @@ from .models import Note, Bookmark, Comment
 
 
 def ensure_default_seed_notes():
-    """Ensure core study notes and sample materials are always present and approved in the database."""
+    """Ensure core study notes and sample materials are present in the database."""
     try:
         from django.contrib.auth.models import User
         from accounts.models import Profile
-
-        # Automatically approve any pending notes
-        Note.objects.filter(status='Pending').update(status='Approved')
 
         # Find or create a seed author user
         seed_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
@@ -90,16 +87,10 @@ def ensure_default_seed_notes():
         ]
 
         for item in seed_notes_data:
-            note, created = Note.objects.get_or_create(
+            Note.objects.get_or_create(
                 title=item['title'],
                 defaults=item
             )
-            if not created and note.status != 'Approved':
-                note.status = 'Approved'
-                note.save()
-
-        # Mark all existing notes in DB as Approved
-        Note.objects.filter(status='Pending').update(status='Approved')
 
     except Exception:
         pass
@@ -119,9 +110,9 @@ def upload_note(request):
                 note.save()
                 return redirect("my_notes")
             else:
-                note.status = "Approved"
+                note.status = "Pending"  # Set to Pending so admin approval is required
                 note.save()
-                messages.success(request, "Document uploaded successfully!")
+                messages.success(request, "Document submitted successfully! It will appear in Browse Notes after admin approval.")
                 return redirect("note_detail", pk=note.id)
     else:
         form = NoteForm()
@@ -144,9 +135,9 @@ def create_online_note(request):
                 note.save()
                 return redirect("my_notes")
             else:
-                note.status = "Approved"
+                note.status = "Pending"  # Set to Pending so admin approval is required
                 note.save()
-                messages.success(request, "Digital E-Note published successfully!")
+                messages.success(request, "Digital E-Note submitted successfully! It will appear in Browse Notes after admin approval.")
                 return redirect("note_detail", pk=note.id)
     else:
         form = OnlineNoteForm()
@@ -163,8 +154,8 @@ def browse_notes(request):
     branch = request.GET.get("branch", "")
     sort = request.GET.get("sort", "newest")
 
-    # Exclude Draft notes from public browse, show Approved and active notes
-    notes = Note.objects.filter(~Q(status="Draft"))
+    # Strictly show ONLY Approved notes to public users
+    notes = Note.objects.filter(status="Approved")
 
     if search:
         notes = notes.filter(
@@ -218,6 +209,9 @@ def note_detail(request, pk):
     ensure_default_seed_notes()
     note = get_object_or_404(Note, pk=pk)
 
+    if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
+        return HttpResponseForbidden("Not allowed to view this note until approved by admin.")
+
     if request.method == "POST":
         comment_text = request.POST.get("comment_text", "").strip()
         if comment_text:
@@ -256,8 +250,8 @@ def edit_note(request, pk):
                 note.status = "Draft"
                 messages.success(request, "Saved as Draft.")
             else:
-                note.status = "Approved"
-                messages.success(request, "Note details updated successfully.")
+                note.status = "Pending"  # Set to Pending upon edit so admin re-approves
+                messages.success(request, "Note details updated successfully! Sent to admin for review.")
             note.save()
             return redirect("my_notes")
     else:
@@ -351,6 +345,9 @@ def reject_note(request, pk):
 @login_required
 def view_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
+    if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
+        return HttpResponseForbidden("Not allowed.")
+
     if note.file and os.path.exists(note.file.path):
         content_type, _ = mimetypes.guess_type(note.file.path)
         return FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
@@ -361,6 +358,9 @@ def view_note(request, pk):
 @login_required
 def download_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
+    if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
+        return HttpResponseForbidden("Not allowed.")
+
     note.downloads += 1
     note.save()
 
