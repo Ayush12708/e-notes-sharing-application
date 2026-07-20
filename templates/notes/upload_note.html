@@ -1,118 +1,57 @@
 {% extends "base.html" %}
 
-{% block title %}Create & Upload Study Note | NoteHub{% endblock %}
+{% block title %}Upload Document Note | NoteHub{% endblock %}
 
 {% block content %}
 
 <div class="form-page-wrapper">
-    <div class="form-card" style="max-width:840px;">
+    <div class="form-card" style="max-width:650px;">
         <div class="form-card-header">
-            <h2>📚 Create & Upload Study Note</h2>
-            <p>Type formatted e-notes, draw whiteboard diagrams, or upload document/image files all in one place.</p>
+            <h2>📤 Upload Study Document / File</h2>
+            <p>Upload PDF documents, Word files, PowerPoint presentations, pictures, or compressed archives.</p>
         </div>
 
-        <form method="POST" enctype="multipart/form-data" id="unifiedNoteForm">
+        <form method="POST" enctype="multipart/form-data" id="fileUploadForm">
             {% csrf_token %}
-            {{ form.drawing_data }}
 
-            <!-- Section 1: Note Details -->
-            <div style="background:var(--bg-main); padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-light); margin-bottom:24px;">
-                <h3 style="font-size:1.05rem; color:var(--text-dark); margin-bottom:16px;">1. Basic Details</h3>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Note Title *</label>
+                {{ form.title }}
+            </div>
 
-                <div class="form-group" style="margin-bottom:16px;">
-                    <label>Note Title *</label>
-                    {{ form.title }}
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                <div class="form-group">
+                    <label>Subject *</label>
+                    {{ form.subject }}
                 </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
-                    <div class="form-group">
-                        <label>Subject *</label>
-                        {{ form.subject }}
-                    </div>
-                    <div class="form-group">
-                        <label>Branch *</label>
-                        {{ form.branch }}
-                    </div>
-                    <div class="form-group">
-                        <label>Semester *</label>
-                        {{ form.semester }}
-                    </div>
+                <div class="form-group">
+                    <label>Branch *</label>
+                    {{ form.branch }}
                 </div>
-
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>Overview Summary (Optional)</label>
-                    {{ form.description }}
+                <div class="form-group">
+                    <label>Semester *</label>
+                    {{ form.semester }}
                 </div>
             </div>
 
-            <!-- Section 2: Formatted Digital Text E-Note -->
-            <div style="background:var(--bg-main); padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-light); margin-bottom:24px;">
-                <h3 style="font-size:1.05rem; color:var(--text-dark); margin-bottom:12px;">2. ✍️ Digital Text E-Notes (Optional)</h3>
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Type or paste formatted study notes, formulas, theorems, and key points directly onto the platform.</p>
-                {{ form.content }}
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Description / Details (Optional)</label>
+                {{ form.description }}
             </div>
 
-            <!-- Section 3: Interactive Drawing Canvas / Whiteboard -->
-            <div style="background:var(--bg-main); padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-light); margin-bottom:24px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="font-size:1.05rem; color:var(--text-dark);">3. 🎨 Whiteboard Diagram & Handwritten Drawing (Optional)</h3>
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Brush, Eraser & Custom Colors</span>
-                </div>
-
-                <!-- Canvas Toolbar -->
-                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:white; padding:10px 14px; border-radius:var(--radius-sm) var(--radius-sm) 0 0; border:1px solid var(--border-light); border-bottom:none;">
-                    <!-- Color Swatches -->
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Color:</span>
-                        <button type="button" onclick="setBrushColor('#000000', this)" class="color-btn active" style="background:#000000; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Black"></button>
-                        <button type="button" onclick="setBrushColor('#2563eb', this)" class="color-btn" style="background:#2563eb; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Blue"></button>
-                        <button type="button" onclick="setBrushColor('#ef4444', this)" class="color-btn" style="background:#ef4444; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Red"></button>
-                        <button type="button" onclick="setBrushColor('#10b981', this)" class="color-btn" style="background:#10b981; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Green"></button>
-                        <button type="button" onclick="setBrushColor('#8b5cf6', this)" class="color-btn" style="background:#8b5cf6; width:24px; height:24px; border-radius:50%; border:2px solid white; cursor:pointer;" title="Purple"></button>
-                        <input type="color" id="customColorPicker" onchange="setCustomColor(this.value)" style="width:28px; height:28px; border:none; cursor:pointer; background:none;" title="Custom Color Picker">
-                    </div>
-
-                    <!-- Size Selector -->
-                    <div style="display:flex; gap:6px; align-items:center; margin-left:10px;">
-                        <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Size:</span>
-                        <button type="button" onclick="setBrushSize(2, this)" class="size-btn active btn-sm btn-sm-secondary" style="padding:2px 8px;">Thin</button>
-                        <button type="button" onclick="setBrushSize(5, this)" class="size-btn btn-sm btn-sm-secondary" style="padding:2px 8px;">Medium</button>
-                        <button type="button" onclick="setBrushSize(12, this)" class="size-btn btn-sm btn-sm-secondary" style="padding:2px 8px;">Thick</button>
-                    </div>
-
-                    <!-- Eraser & Clear -->
-                    <div style="display:flex; gap:8px; margin-left:auto;">
-                        <button type="button" id="eraserBtn" onclick="toggleEraser()" class="btn-sm btn-sm-secondary">
-                            🧹 Eraser
-                        </button>
-                        <button type="button" onclick="clearCanvas()" class="btn-sm btn-sm-danger">
-                            🗑️ Clear Canvas
-                        </button>
-                    </div>
-                </div>
-
-                <!-- HTML5 Canvas Element -->
-                <div style="width:100%; border:1px solid var(--border-light); border-radius:0 0 var(--radius-sm) var(--radius-sm); background:white; overflow:hidden; touch-action:none;">
-                    <canvas id="drawingCanvas" width="776" height="300" style="display:block; cursor:crosshair; width:100%; background:white;"></canvas>
-                </div>
-            </div>
-
-            <!-- Section 4: File Upload Attachment -->
-            <div style="background:var(--bg-main); padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-light); margin-bottom:28px;">
-                <h3 style="font-size:1.05rem; color:var(--text-dark); margin-bottom:10px;">4. 📤 Document or Image File Upload (Optional)</h3>
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Upload external files (PDFs, Word DOCX, PowerPoint PPT, PNG/JPG Pictures, Text files, ZIP archives).</p>
+            <div class="form-group" style="margin-bottom:24px;">
+                <label>Attach Document File * (PDF, DOCX, PPTX, Images, TXT, ZIP)</label>
                 {{ form.file }}
             </div>
 
-            <!-- Action Buttons: Publish, Save Draft, Cancel -->
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                <button type="submit" name="publish" onclick="isSubmitting=true;" class="btn-primary" style="flex:1; justify-content:center; padding:14px;">
-                    🚀 Publish Study Note
+            <div style="display:flex; gap:12px;">
+                <button type="submit" name="publish" onclick="isSubmitting=true;" class="btn-primary" style="flex:1; justify-content:center; padding:12px;">
+                    🚀 Upload Document
                 </button>
-                <button type="submit" name="save_draft" onclick="isSubmitting=true;" class="btn-secondary" style="padding:14px 24px; justify-content:center;">
-                    💾 Save as Draft
+                <button type="submit" name="save_draft" onclick="isSubmitting=true;" class="btn-secondary" style="padding:12px 20px; justify-content:center;">
+                    💾 Save Draft
                 </button>
-                <button type="button" onclick="handleCancel()" class="btn-secondary" style="padding:14px 20px; justify-content:center;">
+                <button type="button" onclick="handleCancel()" class="btn-secondary" style="padding:12px 18px; justify-content:center;">
                     Cancel
                 </button>
             </div>
@@ -122,11 +61,11 @@
 
 <!-- Custom Unsaved Changes Confirmation Modal -->
 <div id="unsavedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); backdrop-filter:blur(4px); z-index:99999; align-items:center; justify-content:center;">
-    <div class="content-card" style="max-width:460px; width:90%; padding:28px; text-align:center; animation:fadeIn 0.2s ease;">
+    <div class="content-card" style="max-width:440px; width:90%; padding:28px; text-align:center; animation:fadeIn 0.2s ease;">
         <div style="font-size:2.8rem; margin-bottom:12px;">⚠️</div>
         <h3 style="font-size:1.3rem; color:var(--text-dark); margin-bottom:8px;">Unsaved Changes</h3>
         <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.5; margin-bottom:24px;">
-            You have unsaved changes in your note. Are you sure you want to leave without saving?
+            You have unsaved details in your upload form. Are you sure you want to leave without saving?
         </p>
 
         <div style="display:flex; flex-direction:column; gap:10px;">
@@ -148,127 +87,17 @@
     let isSubmitting = false;
     let targetQuitUrl = "{% url 'dashboard' %}";
 
-    const canvas = document.getElementById('drawingCanvas');
-    const ctx = canvas.getContext('2d');
-    let isDrawing = false;
-    let currentColor = '#000000';
-    let currentSize = 2;
-    let isEraserMode = false;
-    let hasDrawn = false;
-
-    // Fill white background initially
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     // Track Form Dirtiness
-    document.querySelectorAll('#unifiedNoteForm input, #unifiedNoteForm textarea, #unifiedNoteForm select').forEach(el => {
+    document.querySelectorAll('#fileUploadForm input, #fileUploadForm textarea, #fileUploadForm select').forEach(el => {
         el.addEventListener('input', () => { isFormDirty = true; });
         el.addEventListener('change', () => { isFormDirty = true; });
-    });
-
-    function setBrushColor(color, btn) {
-        isEraserMode = false;
-        currentColor = color;
-        ctx.strokeStyle = currentColor;
-        document.getElementById('eraserBtn').classList.remove('btn-sm-primary');
-        document.getElementById('eraserBtn').classList.add('btn-sm-secondary');
-        if (btn) {
-            document.querySelectorAll('.color-btn').forEach(b => b.style.outline = 'none');
-            btn.style.outline = '2px solid var(--primary)';
-        }
-    }
-
-    function setCustomColor(color) {
-        setBrushColor(color, null);
-    }
-
-    function setBrushSize(size, btn) {
-        currentSize = size;
-        ctx.lineWidth = currentSize;
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('btn-sm-primary'));
-        if (btn) btn.classList.add('btn-sm-primary');
-    }
-
-    function toggleEraser() {
-        isEraserMode = !isEraserMode;
-        const eraserBtn = document.getElementById('eraserBtn');
-        if (isEraserMode) {
-            ctx.strokeStyle = '#ffffff';
-            eraserBtn.classList.remove('btn-sm-secondary');
-            eraserBtn.classList.add('btn-sm-primary');
-        } else {
-            ctx.strokeStyle = currentColor;
-            eraserBtn.classList.remove('btn-sm-primary');
-            eraserBtn.classList.add('btn-sm-secondary');
-        }
-    }
-
-    function clearCanvas() {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        hasDrawn = false;
-    }
-
-    function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-            x: (clientX - rect.left) * scaleX,
-            y: (clientY - rect.top) * scaleY
-        };
-    }
-
-    function startDrawing(e) {
-        isDrawing = true;
-        hasDrawn = true;
-        isFormDirty = true;
-        const pos = getPos(e);
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-    }
-
-    function draw(e) {
-        if (!isDrawing) return;
-        e.preventDefault();
-        const pos = getPos(e);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    }
-
-    function stopDrawing() {
-        isDrawing = false;
-        ctx.closePath();
-    }
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseleave', stopDrawing);
-
-    canvas.addEventListener('touchstart', startDrawing);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDrawing);
-
-    // Form Submit
-    document.getElementById('unifiedNoteForm').addEventListener('submit', function() {
-        if (hasDrawn) {
-            const drawingInput = document.getElementById('drawingDataInput');
-            if (drawingInput) {
-                drawingInput.value = canvas.toDataURL('image/png');
-            }
-        }
     });
 
     // Browser Close / Refresh Warning
     window.addEventListener('beforeunload', function(e) {
         if (isFormDirty && !isSubmitting) {
             e.preventDefault();
-            e.returnValue = 'You have unsaved changes in your note. Are you sure you want to leave?';
+            e.returnValue = 'You have unsaved changes in your upload. Are you sure you want to leave?';
             return e.returnValue;
         }
     });
@@ -310,15 +139,12 @@
 
     function submitDraftFromModal() {
         isSubmitting = true;
-        const form = document.getElementById('unifiedNoteForm');
+        const form = document.getElementById('fileUploadForm');
         const hiddenDraftBtn = document.createElement('input');
         hiddenDraftBtn.type = 'hidden';
         hiddenDraftBtn.name = 'save_draft';
         hiddenDraftBtn.value = '1';
         form.appendChild(hiddenDraftBtn);
-        if (hasDrawn) {
-            document.getElementById('drawingDataInput').value = canvas.toDataURL('image/png');
-        }
         form.submit();
     }
 </script>

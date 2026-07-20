@@ -11,15 +11,13 @@ class NoteForm(forms.ModelForm):
             'branch',
             'semester',
             'description',
-            'content',
-            'drawing_data',
             'file'
         ]
 
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter note title (e.g. DBMS Unit 3 BCNF & Normalization Notes)'
+                'placeholder': 'Enter Note Title'
             }),
 
             'subject': forms.Select(attrs={
@@ -37,13 +35,58 @@ class NoteForm(forms.ModelForm):
 
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Short summary, course code, or key topics covered...'
+                'rows': 4,
+                'placeholder': 'Add details, topics covered, or course code...'
+            }),
+
+            'file': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': '*/*'
+            }),
+        }
+
+
+class OnlineNoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = [
+            'title',
+            'subject',
+            'branch',
+            'semester',
+            'description',
+            'content',
+            'drawing_data',
+            'file'
+        ]
+
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter E-Note Title (e.g. DBMS Normalization Notes)'
+            }),
+
+            'subject': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+
+            'branch': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+
+            'semester': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Semester (1-8)'
+            }),
+
+            'description': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Overview summary of this note'
             }),
 
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 10,
+                'rows': 12,
                 'placeholder': 'Type, format, or paste your digital study notes, formulas, and definitions here...'
             }),
 

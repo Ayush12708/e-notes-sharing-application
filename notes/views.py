@@ -7,7 +7,7 @@ from django.contrib import messages
 import mimetypes
 import os
 
-from .forms import NoteForm
+from .forms import NoteForm, OnlineNoteForm
 from .models import Note, Bookmark, Comment
 
 
@@ -18,18 +18,15 @@ def upload_note(request):
         if form.is_valid():
             note = form.save(commit=False)
             note.uploaded_by = request.user
-            if note.content or note.drawing_data:
-                note.is_online_note = True
-
             if "save_draft" in request.POST:
                 note.status = "Draft"
+                messages.success(request, "Document saved as Draft.")
                 note.save()
-                messages.success(request, "Your note has been saved as a Draft!")
                 return redirect("my_notes")
             else:
-                note.status = "Pending"
+                note.status = "Approved"  # Auto approve user notes so they appear live
                 note.save()
-                messages.success(request, "Study note published successfully!")
+                messages.success(request, "Document uploaded successfully!")
                 return redirect("note_detail", pk=note.id)
     else:
         form = NoteForm()
@@ -39,7 +36,26 @@ def upload_note(request):
 
 @login_required
 def create_online_note(request):
-    return redirect("upload_note")
+    if request.method == "POST":
+        form = OnlineNoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.uploaded_by = request.user
+            note.is_online_note = True
+            if "save_draft" in request.POST:
+                note.status = "Draft"
+                messages.success(request, "E-Note saved as Draft.")
+                note.save()
+                return redirect("my_notes")
+            else:
+                note.status = "Approved"
+                note.save()
+                messages.success(request, "Digital E-Note published successfully!")
+                return redirect("note_detail", pk=note.id)
+    else:
+        form = OnlineNoteForm()
+
+    return render(request, "notes/create_online_note.html", {"form": form})
 
 
 @login_required
@@ -135,20 +151,21 @@ def edit_note(request, pk):
     note = get_object_or_404(Note, pk=pk, uploaded_by=request.user)
 
     if request.method == "POST":
-        form = NoteForm(request.POST, request.FILES, instance=note)
+        form_cls = OnlineNoteForm if note.is_online_note else NoteForm
+        form = form_cls(request.POST, request.FILES, instance=note)
         if form.is_valid():
             note = form.save(commit=False)
             if "save_draft" in request.POST:
                 note.status = "Draft"
-                messages.success(request, "Note saved as Draft.")
+                messages.success(request, "Saved as Draft.")
             else:
-                if note.status == "Draft":
-                    note.status = "Pending"
+                note.status = "Approved"
                 messages.success(request, "Note details updated successfully.")
             note.save()
             return redirect("my_notes")
     else:
-        form = NoteForm(instance=note)
+        form_cls = OnlineNoteForm if note.is_online_note else NoteForm
+        form = form_cls(instance=note)
 
     return render(request, "notes/edit_note.html", {"form": form})
 
