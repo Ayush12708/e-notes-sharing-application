@@ -11,13 +11,14 @@ def dashboard(request):
     approved_count = my_notes.filter(status="Approved").count()
     pending_count = my_notes.filter(status="Pending").count()
     total_downloads = my_notes.aggregate(Sum('downloads'))['downloads__sum'] or 0
+    total_likes_received = sum([n.total_likes for n in my_notes])
 
     # Saved Bookmarks
     user_bookmarks = Bookmark.objects.filter(user=request.user).select_related('note').order_by('-created_at')[:5]
     total_bookmarks = Bookmark.objects.filter(user=request.user).count()
 
     # Study Materials Exploration Data
-    popular_notes = Note.objects.filter(status="Approved").order_by("-downloads")[:6]
+    popular_notes = Note.objects.filter(status="Approved").order_by("-downloads", "-uploaded_at")[:6]
     recent_community_notes = Note.objects.filter(status="Approved").order_by("-uploaded_at")[:6]
 
     # Subject counts for study category exploration
@@ -41,6 +42,7 @@ def dashboard(request):
         "approved_count": approved_count,
         "pending_count": pending_count,
         "total_downloads": total_downloads,
+        "total_likes_received": total_likes_received,
         "total_bookmarks": total_bookmarks,
         "user_bookmarks": user_bookmarks,
         "popular_notes": popular_notes,
