@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: notehub
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings
