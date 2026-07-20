@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}{{ note.title }} | NoteHub{% endblock %}
 
@@ -6,16 +6,14 @@
 
 <div class="dashboard-wrapper">
 
-    <!-- Back & Navigation Header -->
-    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
-        <a href="{% url 'browse_notes' %}" class="btn-secondary" style="font-size:0.88rem; padding:6px 14px;">
+    <!-- Top Breadcrumb & Navigation -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+        <a href="{% url 'browse_notes' %}" class="btn-secondary" style="padding:8px 16px;">
             ← Back to Browse Notes
         </a>
-
-        <!-- Copy Share Link Button -->
-        <button type="button" onclick="copyShareLink()" class="btn-sm btn-sm-secondary" id="shareBtn" style="padding:8px 16px; font-size:0.9rem; cursor:pointer;">
-            📋 Copy Shareable Link
-        </button>
+        <div style="font-size:0.88rem; color:var(--text-muted);">
+            Uploaded by <strong>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</strong> on {{ note.uploaded_at|date:"M d, Y" }}
+        </div>
     </div>
 
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px; align-items:start;">
@@ -84,30 +82,55 @@
             </div>
             {% endif %}
 
-            <!-- Document Preview & Download Card (If File Uploaded) -->
+            <!-- Document File Preview & Action Card (If File Uploaded) -->
             {% if note.file %}
-            <div class="content-card" style="padding:24px; margin-bottom:28px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
-                    <h3 style="font-size:1.1rem; color:var(--text-dark);">📄 Document File Preview</h3>
-                    <div style="display:flex; gap:10px;">
-                        <a href="{% url 'view_note' note.id %}" class="btn-sm btn-sm-secondary" target="_blank">
-                            ↗ Open Fullscreen
+            <div class="content-card" style="padding:28px; margin-bottom:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h3 style="font-size:1.2rem; color:var(--text-dark); margin-bottom:4px;">📄 Attached Document File</h3>
+                        <p style="font-size:0.85rem; color:var(--text-muted);">
+                            File: <strong>{{ file_name }}</strong> ({{ file_size_kb }} KB)
+                        </p>
+                    </div>
+
+                    <a href="{% url 'download_note' note.id %}" class="btn-primary" style="padding:10px 22px;">
+                        ⬇ Download File ({{ note.downloads }})
+                    </a>
+                </div>
+
+                {% if is_image %}
+                <!-- Image File Inline Viewer -->
+                <div style="text-align:center; background:#f8fafc; padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-light);">
+                    <img src="{% url 'view_note' note.id %}" alt="{{ note.title }}" style="max-width:100%; max-height:600px; border-radius:var(--radius-sm); border:1px solid var(--border-light); box-shadow:var(--shadow-sm);">
+                </div>
+
+                {% elif is_pdf %}
+                <!-- PDF Document Embedded Viewer -->
+                <div style="width:100%; height:600px; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-light); background:#f8fafc;">
+                    <iframe src="{% url 'view_note' note.id %}" width="100%" height="100%" style="border:none;"></iframe>
+                </div>
+
+                {% else %}
+                <!-- PowerPoint / Word / Office Document File Card -->
+                <div style="background:var(--bg-main); padding:28px; border-radius:var(--radius-md); border:1px solid var(--border-light); text-align:center;">
+                    <div style="font-size:3.5rem; margin-bottom:12px;">📊</div>
+                    <h4 style="font-size:1.15rem; color:var(--text-dark); margin-bottom:6px;">
+                        {{ file_name }}
+                    </h4>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; max-width:480px; margin-left:auto; margin-right:auto;">
+                        This document is a <strong>{{ file_ext|upper }}</strong> presentation/file. Click the button below to download and open it in PowerPoint, Word, or your document viewer.
+                    </p>
+
+                    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                        <a href="{% url 'download_note' note.id %}" class="btn-primary" style="padding:11px 26px;">
+                            ⬇ Download {{ file_ext|upper }} Presentation
                         </a>
-                        <a href="{% url 'download_note' note.id %}" class="btn-sm btn-sm-primary">
-                            ⬇ Download Note File
+                        <a href="{% url 'view_note' note.id %}" class="btn-secondary" style="padding:11px 20px;" target="_blank">
+                            ↗ Open File Link
                         </a>
                     </div>
                 </div>
-
-                <div style="width:100%; height:580px; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-light); background:#f8fafc;">
-                    <iframe src="{% url 'view_note' note.id %}" width="100%" height="100%" style="border:none;">
-                        <div class="empty-state" style="padding:60px 20px;">
-                            <div class="empty-state-icon">📄</div>
-                            <p style="margin-bottom:16px;">Click below to download and view the course notes file.</p>
-                            <a href="{% url 'download_note' note.id %}" class="btn-primary">⬇ Download Note File</a>
-                        </div>
-                    </iframe>
-                </div>
+                {% endif %}
             </div>
             {% endif %}
 
@@ -140,61 +163,73 @@
                             <div class="user-avatar" style="width:28px; height:28px; font-size:0.8rem;">
                                 {{ comment.user.username|first|upper }}
                             </div>
-                            <strong style="font-size:0.9rem; color:var(--text-dark);">
+                            <strong style="font-size:0.92rem; color:var(--text-dark);">
                                 {{ comment.user.first_name|default:comment.user.username }}
                             </strong>
-                            <span style="font-size:0.78rem; color:var(--text-muted);">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                            <span style="font-size:0.78rem; color:var(--text-muted); margin-left:auto;">
+                                {{ comment.created_at|timesince }} ago
+                            </span>
                         </div>
-                        <p style="font-size:0.92rem; color:var(--text-dark); padding-left:38px; line-height:1.5;">
-                            {{ comment.text }}
-                        </p>
+                        <p style="font-size:0.92rem; color:var(--text-dark); line-height:1.5;">{{ comment.text }}</p>
                     </div>
                     {% empty %}
-                    <div class="empty-state" style="padding:24px;">
-                        <p>No comments yet. Be the first to start the discussion!</p>
-                    </div>
+                    <p style="color:var(--text-muted); font-size:0.9rem; font-style:italic;">
+                        No comments yet. Be the first to start the discussion!
+                    </p>
                     {% endfor %}
                 </div>
             </div>
+
         </div>
 
-        <!-- Sidebar Info Column -->
+        <!-- Sidebar Column: Note Details & Author Card -->
         <div>
-            <!-- Uploader Profile & Download Card -->
-            <div class="content-card" style="padding:24px; text-align:center;">
-                <strong style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); display:block; margin-bottom:16px;">Uploaded By</strong>
-                <div style="width:64px; height:64px; border-radius:50%; background:var(--accent-gradient); color:white; font-size:1.8rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
-                    {{ note.uploaded_by.username|first|upper }}
-                </div>
-                <h3 style="font-size:1.1rem; color:var(--text-dark); margin-bottom:2px;">
-                    {{ note.uploaded_by.first_name|default:note.uploaded_by.username }} {{ note.uploaded_by.last_name }}
+            <!-- Author Card -->
+            <div class="content-card" style="padding:24px; margin-bottom:24px;">
+                <h3 style="font-size:1rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px;">
+                    👤 Author Information
                 </h3>
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">@{{ note.uploaded_by.username }}</p>
+                <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+                    <div class="user-avatar" style="width:48px; height:48px; font-size:1.3rem;">
+                        {{ note.uploaded_by.username|first|upper }}
+                    </div>
+                    <div>
+                        <strong style="font-size:1.05rem; color:var(--text-dark); display:block;">
+                            {{ note.uploaded_by.first_name|default:note.uploaded_by.username }} {{ note.uploaded_by.last_name }}
+                        </strong>
+                        <span style="font-size:0.82rem; color:var(--text-muted);">@{{ note.uploaded_by.username }}</span>
+                    </div>
+                </div>
 
-                <div style="border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:16px 0; margin-bottom:20px; text-align:left; font-size:0.88rem;">
-                    <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
-                        <span style="color:var(--text-muted);">Uploaded Date</span>
-                        <strong>{{ note.uploaded_at|date:"d M Y" }}</strong>
+                <div style="display:flex; flex-direction:column; gap:8px; font-size:0.88rem; color:var(--text-dark); background:var(--bg-main); padding:14px; border-radius:var(--radius-sm);">
+                    <div>🏛 <strong>College:</strong> {{ note.uploaded_by.profile.college|default:"Not specified" }}</div>
+                    <div>🎓 <strong>Semester:</strong> {{ note.uploaded_by.profile.semester|default:note.semester }}</div>
+                </div>
+            </div>
+
+            <!-- Note Summary Metadata Card -->
+            <div class="content-card" style="padding:24px;">
+                <h3 style="font-size:1rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px;">
+                    📊 Note Statistics
+                </h3>
+                <div style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem;">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-light); padding-bottom:8px;">
+                        <span>❤️ Total Likes:</span>
+                        <strong>{{ note.total_likes }}</strong>
                     </div>
-                    <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
-                        <span style="color:var(--text-muted);">Status</span>
-                        <span class="status-pill approved">✔ Verified</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                        <span style="color:var(--text-muted);">Total Downloads</span>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-light); padding-bottom:8px;">
+                        <span>⬇ Total Downloads:</span>
                         <strong>{{ note.downloads }}</strong>
                     </div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-light); padding-bottom:8px;">
+                        <span>💬 Comments:</span>
+                        <strong>{{ comments.count }}</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>📅 Date Added:</span>
+                        <strong>{{ note.uploaded_at|date:"M d, Y" }}</strong>
+                    </div>
                 </div>
-
-                {% if note.file %}
-                <a href="{% url 'download_note' note.id %}" class="btn-primary" style="width:100%; justify-content:center;">
-                    ⬇ Download Note File
-                </a>
-                {% else %}
-                <button type="button" onclick="copyShareLink()" class="btn-primary" style="width:100%; justify-content:center;">
-                    🔗 Share Note Link
-                </button>
-                {% endif %}
             </div>
         </div>
 
@@ -203,21 +238,11 @@
 </div>
 
 <script>
-    function copyShareLink() {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            const shareBtn = document.getElementById('shareBtn');
-            if (shareBtn) {
-                shareBtn.innerText = '✔ Link Copied!';
-                setTimeout(() => { shareBtn.innerText = '📋 Copy Shareable Link'; }, 2500);
-            }
-        });
-    }
-
     function copyNoteText() {
         const textElement = document.getElementById('eNoteContentText');
         if (textElement) {
-            navigator.clipboard.writeText(textElement.innerText).then(function() {
-                alert('E-Note text copied to clipboard!');
+            navigator.clipboard.writeText(textElement.innerText).then(() => {
+                alert("E-Note text copied to clipboard!");
             });
         }
     }

@@ -12,12 +12,11 @@ from .models import Note, Bookmark, Comment
 
 
 def ensure_default_seed_notes():
-    """Ensure core study notes and sample materials are present in the database with 0 hardcoded metrics."""
+    """Ensure core study notes and sample materials are present in the database."""
     try:
         from django.contrib.auth.models import User
         from accounts.models import Profile
 
-        # Find or create a seed author user
         seed_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
         if not seed_user:
             seed_user = User.objects.create_superuser('admin', 'admin@notehub.com', 'admin123')
@@ -110,7 +109,7 @@ def upload_note(request):
                 note.save()
                 return redirect("my_notes")
             else:
-                note.status = "Pending"  # Set to Pending so admin approval is required
+                note.status = "Pending"
                 note.save()
                 messages.success(request, "Document submitted successfully! It will appear in Browse Notes after admin approval.")
                 return redirect("note_detail", pk=note.id)
@@ -135,7 +134,7 @@ def create_online_note(request):
                 note.save()
                 return redirect("my_notes")
             else:
-                note.status = "Pending"  # Set to Pending so admin approval is required
+                note.status = "Pending"
                 note.save()
                 messages.success(request, "Digital E-Note submitted successfully! It will appear in Browse Notes after admin approval.")
                 return redirect("note_detail", pk=note.id)
@@ -154,7 +153,6 @@ def browse_notes(request):
     branch = request.GET.get("branch", "")
     sort = request.GET.get("sort", "newest")
 
-    # Strictly show ONLY Approved notes to public users
     notes = Note.objects.filter(status="Approved")
 
     if search:
@@ -222,11 +220,37 @@ def note_detail(request, pk):
     is_bookmarked = Bookmark.objects.filter(user=request.user, note=note).exists()
     is_liked = request.user in note.likes.all()
 
+    file_ext = ""
+    file_name = ""
+    file_size_kb = 0
+    is_image = False
+    is_pdf = False
+    is_office = False
+
+    if note.file:
+        file_name = os.path.basename(note.file.name)
+        file_ext = os.path.splitext(note.file.name)[1].lower()
+        if note.file and os.path.exists(note.file.path):
+            file_size_kb = round(os.path.getsize(note.file.path) / 1024, 1)
+
+        if file_ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg']:
+            is_image = True
+        elif file_ext == '.pdf':
+            is_pdf = True
+        elif file_ext in ['.pptx', '.ppt', '.docx', '.doc', '.xlsx', '.xls']:
+            is_office = True
+
     context = {
         "note": note,
         "comments": note.comments.all(),
         "is_bookmarked": is_bookmarked,
         "is_liked": is_liked,
+        "file_ext": file_ext,
+        "file_name": file_name,
+        "file_size_kb": file_size_kb,
+        "is_image": is_image,
+        "is_pdf": is_pdf,
+        "is_office": is_office,
     }
     return render(request, "notes/note_detail.html", context)
 
@@ -363,13 +387,11 @@ def view_note(request, pk):
     if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
         return HttpResponseForbidden("Not allowed.")
 
-    # Realtime downloads / view count increment
-    note.downloads += 1
-    note.save()
-
     if note.file and os.path.exists(note.file.path):
         content_type, _ = mimetypes.guess_type(note.file.path)
-        return FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
+        response = FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
+        response["Content-Disposition"] = f'inline; filename="{os.path.basename(note.file.name)}"'
+        return response
     else:
         return redirect("note_detail", pk=pk)
 
@@ -387,5 +409,5 @@ def download_note(request, pk):
     if note.file and os.path.exists(note.file.path):
         return FileResponse(open(note.file.path, "rb"), as_attachment=True)
     else:
-        messages.info(request, "Online e-notes can be viewed and copied directly from the website!")
+        messages.info(request, "Online e-notes can be viewed directly on the website!")
         return redirect("note_detail", pk=pk)
