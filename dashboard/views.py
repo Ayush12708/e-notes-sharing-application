@@ -11,7 +11,7 @@ def dashboard(request):
     approved_count = my_notes.filter(status="Approved").count()
     pending_count = my_notes.filter(status="Pending").count()
     total_downloads = my_notes.aggregate(Sum('downloads'))['downloads__sum'] or 0
-    total_likes_received = sum([n.total_likes for n in my_notes])
+    total_likes_received = sum([n.likes.count() for n in my_notes])
 
     # Saved Bookmarks
     user_bookmarks = Bookmark.objects.filter(user=request.user).select_related('note').order_by('-created_at')[:5]
