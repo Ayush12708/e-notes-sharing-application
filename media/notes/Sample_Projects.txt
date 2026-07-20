@@ -1,0 +1,23 @@
+ 1. Student Learning Tracker
+ 2. Simple Online Quiz System
+ 3. Personal Expense Tracker – Web Application
+ 4. Student Attendance Management System
+ 5. To-Do List Manager
+ 6. Online Feedback Collection System
+ 7. Basic Blog Application
+ 8. Library Book Management System
+ 9. Student Result Management System
+ 10. Online Course Registration System
+ 11. Daily Habit Tracker – Web Application                                        
+ 12. Simple E-Notes Sharing Platform – Web Application
+ 13. Event Registration and Management System – Web App
+ 14. Online Complaint Management System – Web Application
+ 15. Resume Builder Web Application – Web Application
+ 16. Basic E-Commerce Website
+ 17. Coding Practice Tracker – GitHub / LeetCode Integration
+ 18. Online Polling / Voting System – Web Application
+ 19. Personal Diary Web Application 
+ 20. Simple Chat Application
+***
+
+2,6,12,15,17, 
