@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import FileResponse, HttpResponseForbidden
+from django.http import FileResponse, HttpResponseForbidden, JsonResponse
 from django.db.models import Q
 from django.contrib import messages
 import mimetypes
@@ -12,7 +12,7 @@ from .models import Note, Bookmark, Comment
 
 
 def ensure_default_seed_notes():
-    """Ensure core study notes and sample materials are present in the database."""
+    """Ensure core study notes and sample materials are present in the database with 0 hardcoded metrics."""
     try:
         from django.contrib.auth.models import User
         from accounts.models import Profile
@@ -33,7 +33,7 @@ def ensure_default_seed_notes():
                 'content': 'UNIT 3: DATABASE NORMALIZATION\n\n1. Functional Dependency (FD):\nA Functional Dependency X -> Y holds if two tuples having same X value must have same Y value.\n\n2. 1st Normal Form (1NF):\n- Attributes must contain atomic values only.\n- No multivalued or composite attributes allowed.\n\n3. 2nd Normal Form (2NF):\n- Relation must be in 1NF.\n- No partial dependency exists (Non-prime attribute must fully depend on candidate key).\n\n4. 3rd Normal Form (3NF):\n- Relation must be in 2NF.\n- No transitive dependency X -> Y where X is not a super key and Y is non-prime attribute.\n\n5. Boyce-Codd Normal Form (BCNF):\n- For every functional dependency X -> Y, X MUST be a Super Key.',
                 'uploaded_by': seed_user,
                 'status': 'Approved',
-                'downloads': 142,
+                'downloads': 0,
                 'is_online_note': True,
             },
             {
@@ -45,7 +45,7 @@ def ensure_default_seed_notes():
                 'content': 'DATA STRUCTURES REVISION GUIDE\n\n1. ARRAY & LINKED LIST:\n- Array Search: O(N) un-sorted, O(log N) binary search.\n- Linked List Insertion at head: O(1).\n\n2. TREES & BST:\n- Binary Search Tree Search: O(H) where H = height.\n- AVL Tree & Red-Black Tree guarantee O(log N) worst case search.\n\n3. GRAPHS:\n- BFS uses Queue data structure (Level order traversal).\n- DFS uses Stack / Recursion.\n- Dijkstra Algorithm for shortest path: O(E log V) with Priority Queue.',
                 'uploaded_by': seed_user,
                 'status': 'Approved',
-                'downloads': 210,
+                'downloads': 0,
                 'is_online_note': True,
             },
             {
@@ -57,7 +57,7 @@ def ensure_default_seed_notes():
                 'content': 'OPERATING SYSTEMS - PROCESS MANAGEMENT\n\n1. PROCESS STATES:\nNew -> Ready -> Running -> Terminated (Wait/Block for I/O).\n\n2. CPU SCHEDULING:\n- FCFS: First Come First Serve (Convoy Effect).\n- Round Robin: Time Quantum based preemptive scheduling.\n- SJF: Shortest Job First (Minimum average waiting time).\n\n3. DEADLOCK CONDITIONS (Coffman Conditions):\n- Mutual Exclusion\n- Hold and Wait\n- No Preemption\n- Circular Wait',
                 'uploaded_by': seed_user,
                 'status': 'Approved',
-                'downloads': 185,
+                'downloads': 0,
                 'is_online_note': True,
             },
             {
@@ -69,7 +69,7 @@ def ensure_default_seed_notes():
                 'content': 'COMPUTER NETWORKS - OSI MODEL\n\n1. Application Layer (HTTP, FTP, SMTP)\n2. Presentation Layer (Encryption, Compression)\n3. Session Layer (Session management, RPC)\n4. Transport Layer (TCP - reliable, UDP - connectionless)\n5. Network Layer (IP addressing, Routing - OSPF, BGP)\n6. Data Link Layer (MAC addressing, Ethernet, Framing)\n7. Physical Layer (Bits, Cables, Signals)',
                 'uploaded_by': seed_user,
                 'status': 'Approved',
-                'downloads': 98,
+                'downloads': 0,
                 'is_online_note': True,
             },
             {
@@ -81,7 +81,7 @@ def ensure_default_seed_notes():
                 'content': 'PYTHON OOP CHEATSHEET\n\n1. CLASSES & OBJECTS:\nclass Student:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n2. DECORATORS:\ndef my_decorator(func):\n    def wrapper():\n        print("Before function")\n        func()\n        print("After function")\n    return wrapper',
                 'uploaded_by': seed_user,
                 'status': 'Approved',
-                'downloads': 315,
+                'downloads': 0,
                 'is_online_note': True,
             }
         ]
@@ -250,7 +250,7 @@ def edit_note(request, pk):
                 note.status = "Draft"
                 messages.success(request, "Saved as Draft.")
             else:
-                note.status = "Pending"  # Set to Pending upon edit so admin re-approves
+                note.status = "Pending"
                 messages.success(request, "Note details updated successfully! Sent to admin for review.")
             note.save()
             return redirect("my_notes")
@@ -279,9 +279,16 @@ def toggle_bookmark(request, pk):
     bookmark, created = Bookmark.objects.get_or_create(user=request.user, note=note)
     if not created:
         bookmark.delete()
+        is_bookmarked = False
         messages.info(request, "Removed from bookmarks.")
     else:
+        is_bookmarked = True
         messages.success(request, "Saved to bookmarks!")
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json':
+        return JsonResponse({
+            'bookmarked': is_bookmarked
+        })
 
     referer = request.META.get('HTTP_REFERER')
     if referer:
@@ -294,8 +301,16 @@ def toggle_like(request, pk):
     note = get_object_or_404(Note, pk=pk)
     if request.user in note.likes.all():
         note.likes.remove(request.user)
+        is_liked = False
     else:
         note.likes.add(request.user)
+        is_liked = True
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json':
+        return JsonResponse({
+            'liked': is_liked,
+            'likes_count': note.likes.count()
+        })
 
     referer = request.META.get('HTTP_REFERER')
     if referer:
@@ -348,11 +363,15 @@ def view_note(request, pk):
     if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
         return HttpResponseForbidden("Not allowed.")
 
+    # Realtime downloads / view count increment
+    note.downloads += 1
+    note.save()
+
     if note.file and os.path.exists(note.file.path):
         content_type, _ = mimetypes.guess_type(note.file.path)
         return FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
     else:
-        return HttpResponseForbidden("This is an online e-note.")
+        return redirect("note_detail", pk=pk)
 
 
 @login_required
@@ -361,6 +380,7 @@ def download_note(request, pk):
     if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
         return HttpResponseForbidden("Not allowed.")
 
+    # Realtime download counter increment
     note.downloads += 1
     note.save()
 
