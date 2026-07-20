@@ -14,7 +14,7 @@
         <div class="auth-card" style="max-width:500px;">
             <h2>Create Account</h2>
 
-            <form method="POST">
+            <form method="POST" id="registerForm">
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -68,5 +68,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Enable instant Enter key form submission from any input field
+    document.querySelectorAll('#registerForm input').forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const form = document.getElementById('registerForm');
+                if (form && form.reportValidity()) {
+                    form.submit();
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock %}

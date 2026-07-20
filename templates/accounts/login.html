@@ -20,7 +20,7 @@
             </div>
             {% endif %}
 
-            <form method="POST">
+            <form method="POST" id="loginForm">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
 
@@ -46,7 +46,7 @@
                     >
                 </div>
 
-                <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">
+                <button type="submit" id="loginBtn" class="btn-primary" style="width:100%; justify-content:center;">
                     Sign In
                 </button>
 
@@ -57,5 +57,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Enable instant Enter key form submission from any input field
+    document.querySelectorAll('#loginForm input').forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const form = document.getElementById('loginForm');
+                if (form && form.reportValidity()) {
+                    form.submit();
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock %}
