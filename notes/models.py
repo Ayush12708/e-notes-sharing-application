@@ -57,6 +57,7 @@ class Note(models.Model):
         default="Pending"
     )
 
+    @property
     def total_likes(self):
         return self.likes.count()
 
