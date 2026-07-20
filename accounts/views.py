@@ -7,7 +7,24 @@ from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
 from .models import Profile
 
 
+def ensure_default_superuser():
+    """Auto-create a default admin user on production if no users exist."""
+    try:
+        if User.objects.count() == 0:
+            admin_user = User.objects.create_superuser('admin', 'admin@notehub.com', 'admin123')
+            Profile.objects.create(
+                user=admin_user,
+                phone='1234567890',
+                college='NoteHub University',
+                semester=1
+            )
+    except Exception:
+        pass
+
+
 def register(request):
+    ensure_default_superuser()
+
     if request.user.is_authenticated:
         return redirect('dashboard')
 
@@ -15,8 +32,13 @@ def register(request):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
+            username = form.cleaned_data['username'].strip()
+            if User.objects.filter(username=username).exists():
+                messages.error(request, f"Username '{username}' is already taken. Please choose another one.")
+                return render(request, 'accounts/register.html', {'form': form})
+
             user = User.objects.create_user(
-                username=form.cleaned_data['username'],
+                username=username,
                 first_name=form.cleaned_data['first_name'],
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password']
@@ -29,8 +51,12 @@ def register(request):
                 semester=form.cleaned_data['semester']
             )
 
-            messages.success(request, "Registration successful! You can now log in with your credentials.")
+            messages.success(request, "Registration successful! You can now sign in with your username and password.")
             return redirect('login')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
 
     else:
         form = RegisterForm()
@@ -39,6 +65,8 @@ def register(request):
 
 
 def login_view(request):
+    ensure_default_superuser()
+
     if request.user.is_authenticated:
         return redirect('dashboard')
 
@@ -46,17 +74,24 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
 
+        if not username or not password:
+            messages.error(request, "Please enter both username and password.")
+            return render(request, 'accounts/login.html')
+
         user = authenticate(request, username=username, password=password)
 
-        if user:
-            login(request, user)
-            messages.success(request, f"Welcome back, {user.first_name or user.username}!")
-            next_url = request.GET.get('next') or request.POST.get('next')
-            if next_url:
-                return redirect(next_url)
-            return redirect('dashboard')
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+                next_url = request.GET.get('next') or request.POST.get('next')
+                if next_url and next_url.startswith('/'):
+                    return redirect(next_url)
+                return redirect('dashboard')
+            else:
+                messages.error(request, "This user account is disabled.")
         else:
-            messages.error(request, "Invalid username or password. If you haven't registered on this live deployment yet, please click 'Register here' below!")
+            messages.error(request, "Invalid username or password. If you haven't registered on this website yet, click 'Register here' below to create your free account!")
 
     return render(request, 'accounts/login.html')
 
@@ -84,6 +119,8 @@ def profile_view(request):
             p_form.save()
             messages.success(request, "Profile details updated successfully!")
             success_msg = True
+        else:
+            messages.error(request, "Please fix the errors below.")
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=profile)
