@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ note.title }} | NoteHub{% endblock %}
+{% block title %}{{ note.title }} | StudyVerse{% endblock %}
 
 {% block content %}
 
@@ -29,6 +29,7 @@
                             <span class="user-badge">{{ note.subject }}</span>
                             <span class="status-pill approved">{{ note.get_branch_display }}</span>
                             <span style="font-size:0.88rem; color:var(--text-muted);">Semester {{ note.semester }}</span>
+                            <span class="status-pill approved" style="background:#e0e7ff; color:#4f46e5;">👁 {{ note.views }} Views</span>
                             {% if note.is_online_note %}
                             <span class="status-pill approved" style="background:#e0e7ff; color:#4f46e5;">✍️ Web E-Note</span>
                             {% endif %}
@@ -41,7 +42,7 @@
                             {% if is_liked %}👍 Liked{% else %}🤍 Like{% endif %} ({{ note.total_likes }})
                         </a>
                         <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-secondary" style="padding:8px 16px; font-size:0.9rem;">
-                            {% if is_bookmarked %}💖 Saved{% else %}❤️ Bookmark{% endif %}
+                            {% if is_bookmarked %}🔖 Saved{% else %}🔖 Save{% endif %}
                         </a>
                         {% if note.file %}
                         <a href="{% url 'download_note' note.id %}" class="btn-primary" style="padding:9px 22px;">

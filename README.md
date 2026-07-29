@@ -1,4 +1,4 @@
-# 📚 NoteHub – E-Notes Sharing & Digital Study Platform
+# 🚀 StudyVerse – Empowering Minds, Sharing Knowledge
 
 [![Live Website](https://img.shields.io/badge/Render-Live%20Demo-brightgreen?style=for-the-badge&logo=render&logoColor=white)](https://notehub-vthi.onrender.com/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ayush12708/e-notes-sharing-application)
@@ -9,7 +9,7 @@
 
 > 🚀 **Live Production Deployment**: [https://notehub-vthi.onrender.com/](https://notehub-vthi.onrender.com/)
 > 
-> **NoteHub** is a modern, full-featured web application designed for university students to share, discover, type, draw, and download academic study notes, lecture guides, and exam preparation materials in real-time.
+> **StudyVerse** (*"Empowering Minds, Sharing Knowledge"*) is a modern, full-featured web application designed for university students to share, discover, type, draw, and download academic study notes, lecture guides, and exam preparation materials in real-time.
 
 ---
 

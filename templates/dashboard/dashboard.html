@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Dashboard - Study Materials Hub | NoteHub{% endblock %}
+{% block title %}Dashboard - Study Materials Universe | StudyVerse{% endblock %}
 
 {% block content %}
 
@@ -117,7 +117,7 @@
                     </span>
 
                     <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
-                        👁 Details & View
+                        👁 View
                     </a>
                 </div>
             </div>
@@ -164,7 +164,7 @@
                             <td>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</td>
                             <td>
                                 <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
-                                    👁 Details
+                                    👁 View
                                 </a>
                             </td>
                         </tr>

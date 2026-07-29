@@ -1,1 +1,1 @@
-console.log("NoteHub Loaded Successfully!");
+console.log("StudyVerse Loaded Successfully! Empowering Minds, Sharing Knowledge.");

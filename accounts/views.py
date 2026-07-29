@@ -13,17 +13,17 @@ def ensure_default_users():
         # 1. Admin Account
         admin_user, created = User.objects.get_or_create(
             username='admin',
-            defaults={'email': 'admin@notehub.com', 'is_staff': True, 'is_superuser': True}
+            defaults={'email': 'admin@studyverse.com', 'is_staff': True, 'is_superuser': True}
         )
         if not admin_user.check_password('admin123'):
             admin_user.set_password('admin123')
             admin_user.save()
-        Profile.objects.get_or_create(user=admin_user, defaults={'college': 'NoteHub University', 'semester': 1})
+        Profile.objects.get_or_create(user=admin_user, defaults={'college': 'StudyVerse University', 'semester': 1})
 
         # 2. Ayush Account
         ayush_user, created = User.objects.get_or_create(
             username='ayush',
-            defaults={'email': 'ayush@notehub.com', 'first_name': 'Ayush', 'last_name': 'Kumar'}
+            defaults={'email': 'ayush@studyverse.com', 'first_name': 'Ayush', 'last_name': 'Kumar'}
         )
         if not ayush_user.check_password('ayush123'):
             ayush_user.set_password('ayush123')
@@ -33,7 +33,7 @@ def ensure_default_users():
         # 3. Bala Account
         bala_user, created = User.objects.get_or_create(
             username='bala',
-            defaults={'email': 'bala@notehub.com', 'first_name': 'Bala'}
+            defaults={'email': 'bala@studyverse.com', 'first_name': 'Bala'}
         )
         if not bala_user.check_password('bala123'):
             bala_user.set_password('bala123')
@@ -75,7 +75,7 @@ def register(request):
 
             # Automatically log the user in immediately after registration!
             login(request, user)
-            messages.success(request, f"Welcome to NoteHub, {user.first_name or user.username}! Your account has been created successfully.")
+            messages.success(request, f"Welcome to StudyVerse, {user.first_name or user.username}! Your account has been created successfully.")
             return redirect('dashboard')
         else:
             for field, errors in form.errors.items():

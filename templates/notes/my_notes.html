@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}My Notes & Drafts | NoteHub{% endblock %}
+{% block title %}My Notes & Drafts | StudyVerse{% endblock %}
 
 {% block content %}
 
@@ -30,7 +30,7 @@
                         <th>Semester</th>
                         <th>Status</th>
                         <th>Uploaded On</th>
-                        <th>Downloads</th>
+                        <th>Views</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -56,11 +56,11 @@
                             {% endif %}
                         </td>
                         <td>{{ note.uploaded_at|date:"d M Y" }}</td>
-                        <td>{{ note.downloads }}</td>
+                        <td>👁 {{ note.views }}</td>
                         <td>
                             <div class="action-group">
                                 <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
-                                    👁 View Details
+                                    👁 View
                                 </a>
                                 <a href="{% url 'edit_note' note.id %}" class="btn-sm btn-sm-secondary">
                                     ✏ Edit

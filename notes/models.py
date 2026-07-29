@@ -49,6 +49,7 @@ class Note(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     downloads = models.IntegerField(default=0)
+    views = models.IntegerField(default=0)
     likes = models.ManyToManyField(User, related_name='liked_notes', blank=True)
 
     status = models.CharField(

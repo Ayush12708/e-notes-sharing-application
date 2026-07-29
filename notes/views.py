@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import FileResponse, HttpResponseForbidden, JsonResponse
-from django.db.models import Q
+from django.db.models import Q, F, Sum
 from django.contrib import messages
 import mimetypes
 import os
@@ -19,8 +19,8 @@ def ensure_default_seed_notes():
 
         seed_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
         if not seed_user:
-            seed_user = User.objects.create_superuser('admin', 'admin@notehub.com', 'admin123')
-            Profile.objects.create(user=seed_user, college='NoteHub University', semester=1)
+            seed_user = User.objects.create_superuser('admin', 'admin@studyverse.com', 'admin123')
+            Profile.objects.create(user=seed_user, college='StudyVerse University', semester=1)
 
         seed_notes_data = [
             {
@@ -209,6 +209,10 @@ def note_detail(request, pk):
 
     if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
         return HttpResponseForbidden("Not allowed to view this note until approved by admin.")
+
+    if request.method == "GET":
+        Note.objects.filter(pk=pk).update(views=F("views") + 1)
+        note.refresh_from_db()
 
     if request.method == "POST":
         comment_text = request.POST.get("comment_text", "").strip()

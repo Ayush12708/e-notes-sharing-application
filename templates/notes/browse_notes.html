@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Browse Notes | NoteHub{% endblock %}
+{% block title %}Browse Notes | StudyVerse{% endblock %}
 
 {% block content %}
 
@@ -114,16 +114,16 @@
                                 <a href="{% url 'toggle_like' note.id %}" style="text-decoration:none; font-size:0.85rem;" title="Like Note">
                                     {% if request.user in note.likes.all %}👍{% else %}🤍{% endif %} {{ note.total_likes }}
                                 </a>
-                                <span style="font-size:0.85rem; color:var(--text-muted);">⬇ {{ note.downloads }}</span>
+                                <span style="font-size:0.85rem; color:var(--text-muted);" title="Real Note Views">👁 {{ note.views }} Views</span>
                             </div>
                         </td>
                         <td>
                             <div class="action-group">
-                                <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-secondary" title="Save Bookmark">
-                                    {% if note.id in user_bookmarked_ids %}💖 Saved{% else %}❤️ Bookmark{% endif %}
+                                <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm {% if note.id in user_bookmarked_ids %}btn-sm-secondary{% else %}btn-sm-secondary{% endif %}" title="Save Note">
+                                    {% if note.id in user_bookmarked_ids %}🔖 Saved{% else %}🔖 Save{% endif %}
                                 </a>
                                 <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
-                                    👁 Details & View
+                                    👁 View
                                 </a>
                             </div>
                         </td>

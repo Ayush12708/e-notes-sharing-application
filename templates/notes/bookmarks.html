@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Saved Bookmarks | NoteHub{% endblock %}
+{% block title %}Saved Bookmarks | StudyVerse{% endblock %}
 
 {% block content %}
 
@@ -30,7 +30,7 @@
                         <th>Branch</th>
                         <th>Semester</th>
                         <th>Uploaded By</th>
-                        <th>Downloads</th>
+                        <th>Views</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -46,14 +46,14 @@
                         <td>{{ note.get_branch_display|default:note.branch }}</td>
                         <td>Semester {{ note.semester }}</td>
                         <td>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</td>
-                        <td>{{ note.downloads }}</td>
+                        <td>👁 {{ note.views }}</td>
                         <td>
                             <div class="action-group">
-                                <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-danger" title="Remove Bookmark">
-                                    💔 Remove
+                                <a href="{% url 'toggle_bookmark' note.id %}" class="btn-sm btn-sm-danger" title="Unsave Note">
+                                    🔖 Unsave
                                 </a>
                                 <a href="{% url 'note_detail' note.id %}" class="btn-sm btn-sm-primary">
-                                    👁 Details & View
+                                    👁 View
                                 </a>
                             </div>
                         </td>

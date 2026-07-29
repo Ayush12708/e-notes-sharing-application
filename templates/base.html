@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}NoteHub - Smart E-Notes Platform{% endblock %}</title>
+    <title>{% block title %}StudyVerse - Empowering Minds, Sharing Knowledge{% endblock %}</title>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -12,7 +12,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -20,8 +20,11 @@
     <nav class="navbar">
         <div class="logo">
             <a href="{% url 'home' %}">
-                <span class="logo-icon">📚</span>
-                <span>NoteHub</span>
+                <span class="logo-icon">🚀</span>
+                <div style="display:flex; flex-direction:column; justify-content:center;">
+                    <span style="font-weight:800; line-height:1.1;" class="brand-gradient-text">StudyVerse</span>
+                    <span style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-top:1px;">Empowering Minds, Sharing Knowledge</span>
+                </div>
             </a>
         </div>
 
@@ -106,16 +109,70 @@
         {% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-brand">
-            <span>📚</span> NoteHub
+    <!-- btechbook inspired Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <!-- Column 1: About -->
+            <div class="footer-col">
+                <a class="brand-logo" href="{% url 'home' %}" style="margin-bottom:12px;">
+                    <div class="brand-icon">
+                        📖
+                    </div>
+                    <span class="brand-text" style="color:#ffffff;">Study<span class="brand-highlight">Verse</span></span>
+                </a>
+                <p>Your one-stop destination for engineering lecture notes, PDF study materials, and e-notes across all major branches. Empowering college students to excel together.</p>
+                <div style="margin-top: 16px;">
+                    <p><strong style="color:#ffffff;">Tagline:</strong> <span class="tagline-badge" style="background:#1e293b; color:#38bdf8; border-color:#334155;">Empowering Minds, Sharing Knowledge</span></p>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links & Departments -->
+            <div class="footer-col">
+                <h3>Engineering & Academic Branches</h3>
+                <ul class="footer-list">
+                    <li><a href="{% url 'home' %}">🏠 Home Page</a></li>
+                    <li><a href="{% url 'browse_notes' %}?branch=CSE">💻 Computer Science & IT</a></li>
+                    <li><a href="{% url 'browse_notes' %}?branch=ECE">🔌 Electronics & Comm.</a></li>
+                    <li><a href="{% url 'browse_notes' %}?branch=ME">⚙️ Mechanical Engineering</a></li>
+                    <li><a href="{% url 'browse_notes' %}?branch=CIVIL">🏗️ Civil Engineering</a></li>
+                    <li><a href="{% url 'browse_notes' %}?branch=BCA_MCA">💻 BCA / MCA</a></li>
+                    <li><a href="{% url 'browse_notes' %}">📚 All Study Materials</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Subject Quick Jump -->
+            <div class="footer-col">
+                <h3>Quick Jump to Subjects</h3>
+
+                <div class="dropdown-group">
+                    <label>Computer Science & IT</label>
+                    <select class="footer-select" onchange="if(this.value) window.location.href=this.value;">
+                        <option value="">-- Choose Subject --</option>
+                        <option value="{% url 'browse_notes' %}?subject=DSA">Data Structures & Algorithms</option>
+                        <option value="{% url 'browse_notes' %}?subject=DBMS">Database Systems (DBMS)</option>
+                        <option value="{% url 'browse_notes' %}?subject=CN">Computer Networks (CN)</option>
+                        <option value="{% url 'browse_notes' %}?subject=OS">Operating Systems (OS)</option>
+                        <option value="{% url 'browse_notes' %}?subject=PYTHON">Python Programming</option>
+                    </select>
+                </div>
+
+                <div class="dropdown-group">
+                    <label>Other Core Subjects</label>
+                    <select class="footer-select" onchange="if(this.value) window.location.href=this.value;">
+                        <option value="">-- Choose Subject --</option>
+                        <option value="{% url 'browse_notes' %}?subject=JAVA">Java Programming</option>
+                        <option value="{% url 'browse_notes' %}?subject=MATH">Mathematics</option>
+                        <option value="{% url 'browse_notes' %}?subject=CC">Cloud Computing</option>
+                        <option value="{% url 'browse_notes' %}?subject=OTHER">Other / General</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <p>A modern e-notes sharing platform built for students and educators to collaborate and excel together.</p>
-        <div class="copyright">
-            © 2026 NoteHub. All rights reserved.
+        <div class="footer-bottom">
+            <p>&copy; 2026 StudyVerse. All rights reserved. Empowering Minds, Sharing Knowledge.</p>
         </div>
     </footer>
+
 
     <script src="{% static 'js/script.js' %}"></script>
     <script>
