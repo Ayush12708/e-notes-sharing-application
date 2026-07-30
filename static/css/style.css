@@ -1029,90 +1029,48 @@ select.form-control {
     margin-top: 10px;
 }
 
-.auth-split-wrapper {
-    min-height: calc(100vh - 70px);
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-}
-
-.auth-sidebar {
-    background: linear-gradient(135deg, #1e293b 0%, #1e3a8a 50%, #0f172a 100%);
-    color: white;
-    padding: 60px 8%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.auth-sidebar::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.15), transparent 70%);
-    pointer-events: none;
-}
-
-.auth-sidebar h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 16px;
-    letter-spacing: -0.5px;
-}
-
-.auth-sidebar p {
-    font-size: 1.02rem;
-    color: #cbd5e1;
-    line-height: 1.65;
-    max-width: 460px;
-}
-
-.auth-form-side {
+.auth-page-container {
+    min-height: calc(100vh - 120px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 50px 30px;
-    background: #f8fafc;
+    padding: 60px 20px;
+    background: radial-gradient(circle at top, #f1f5f9 0%, #f8fafc 60%, #e2e8f0 100%);
 }
 
-.auth-card {
+.auth-card-single {
     background: #ffffff;
-    padding: 44px 40px;
-    border-radius: 16px;
+    padding: 48px 44px;
+    border-radius: 18px;
     width: 100%;
-    max-width: 460px;
+    max-width: 480px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-    transition: all 0.2s ease;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+    transition: all 0.25s ease;
 }
 
-.auth-card h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 6px;
-    text-align: center;
+.auth-card-single:hover {
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
 }
 
-.auth-card input.form-control,
-.auth-card select.form-control {
+.auth-card-single input.form-control,
+.auth-card-single select.form-control {
     width: 100%;
-    padding: 11px 14px;
+    padding: 12px 16px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
     background: #f8fafc;
     color: #0f172a;
-    font-size: 0.92rem;
+    font-size: 0.94rem;
     outline: none;
     transition: all 0.2s ease;
 }
 
-.auth-card input.form-control:focus,
-.auth-card select.form-control:focus {
+.auth-card-single input.form-control:focus,
+.auth-card-single select.form-control:focus {
     border-color: #2563eb;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.14);
 }
 
 .auth-footer {
