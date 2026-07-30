@@ -246,8 +246,10 @@ def note_detail(request, pk):
     if note.file:
         file_name = os.path.basename(note.file.name)
         file_ext = os.path.splitext(note.file.name)[1].lower()
-        if note.file and os.path.exists(note.file.path):
-            file_size_kb = round(os.path.getsize(note.file.path) / 1024, 1)
+        try:
+            file_size_kb = round(note.file.size / 1024, 1)
+        except Exception:
+            file_size_kb = 0
 
         if file_ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg']:
             is_image = True
@@ -416,11 +418,18 @@ def view_note(request, pk):
     if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:
         return HttpResponseForbidden("Not allowed.")
 
-    if note.file and os.path.exists(note.file.path):
-        content_type, _ = mimetypes.guess_type(note.file.path)
-        response = FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
-        response["Content-Disposition"] = f'inline; filename="{os.path.basename(note.file.name)}"'
-        return response
+    if note.file:
+        try:
+            if os.path.exists(note.file.path):
+                content_type, _ = mimetypes.guess_type(note.file.path)
+                response = FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
+                response["Content-Disposition"] = f'inline; filename="{os.path.basename(note.file.name)}"'
+                return response
+        except NotImplementedError:
+            return redirect(note.file.url)
+        except Exception:
+            pass
+        return redirect(note.file.url)
     else:
         return redirect("note_detail", pk=pk)
 
@@ -435,8 +444,15 @@ def download_note(request, pk):
     note.downloads += 1
     note.save()
 
-    if note.file and os.path.exists(note.file.path):
-        return FileResponse(open(note.file.path, "rb"), as_attachment=True)
+    if note.file:
+        try:
+            if os.path.exists(note.file.path):
+                return FileResponse(open(note.file.path, "rb"), as_attachment=True)
+        except NotImplementedError:
+            return redirect(note.file.url)
+        except Exception:
+            pass
+        return redirect(note.file.url)
     else:
         messages.info(request, "Online e-notes can be viewed directly on the website!")
         return redirect("note_detail", pk=pk)
