@@ -82,6 +82,18 @@ def ensure_default_seed_notes():
                 'status': 'Approved',
                 'downloads': 0,
                 'is_online_note': True,
+            },
+            {
+                'title': 'Summer Placement Training Notes - Data Structures & Algorithms',
+                'subject': 'DSA',
+                'branch': 'CSE',
+                'semester': 5,
+                'description': 'Student submitted placement training notes covering Dynamic Programming, Graph Algorithms, and Trees.',
+                'content': 'PLACEMENT TRAINING DSA NOTES\n\n1. Dynamic Programming - 0/1 Knapsack & Subset Sum\n2. Graph Traversal - BFS, DFS & Topological Sort\n3. Binary Search Tree Operations and Balancing.',
+                'uploaded_by': seed_user,
+                'status': 'Pending',
+                'downloads': 0,
+                'is_online_note': True,
             }
         ]
 

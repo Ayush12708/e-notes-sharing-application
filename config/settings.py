@@ -87,20 +87,38 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database Configuration with Seamless Multi-User Session Fallback
-try:
-    import MySQLdb
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'notehub_db',
-            'USER': 'root',
-            'PASSWORD': 'ayush763',
-            'HOST': 'localhost',
-            'PORT': '3306',
+# Database Configuration (MySQL local/remote with SQLite fallback for Vercel/Cloud)
+IS_VERCEL = bool(os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'))
+
+if not IS_VERCEL:
+    try:
+        import MySQLdb
+        import socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1.0)
+        result = sock.connect_ex(('127.0.0.1', 3306))
+        sock.close()
+        if result == 0:
+            DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.mysql',
+                    'NAME': 'notehub_db',
+                    'USER': 'root',
+                    'PASSWORD': 'ayush763',
+                    'HOST': 'localhost',
+                    'PORT': '3306',
+                }
+            }
+        else:
+            raise ConnectionError("Local MySQL port closed")
+    except Exception:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
-except Exception:
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
