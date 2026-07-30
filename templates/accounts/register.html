@@ -1,69 +1,107 @@
 {% extends 'base.html' %}
 
-{% block title %}Register | StudyVerse{% endblock %}
+{% block title %}Create Account | StudyVerse{% endblock %}
 
 {% block content %}
 
 <div class="auth-split-wrapper">
+    <!-- Left Sidebar: Professional Academic Presentation -->
     <div class="auth-sidebar">
-        <span class="tagline-badge" style="margin-bottom:16px; background:rgba(255,255,255,0.2); color:white; border-color:rgba(255,255,255,0.3);">✨ Empowering Minds, Sharing Knowledge</span>
-        <h1>🚀 Join StudyVerse</h1>
-        <p>Create your free account to start sharing study notes, downloading materials, and connecting with peers in your academic universe.</p>
+        <div style="max-width:440px;">
+            <span class="tagline-badge" style="margin-bottom:20px; background:rgba(255,255,255,0.12); color:#e0e7ff; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(6px);">
+                ✨ Empowering Minds, Sharing Knowledge
+            </span>
+            <h1 style="font-size:2.5rem; font-weight:800; color:#ffffff; margin-bottom:16px; letter-spacing:-0.5px;">
+                Join the<br>
+                <span style="color:#93c5fd;">StudyVerse Community</span>
+            </h1>
+            <p style="font-size:1.02rem; color:#cbd5e1; line-height:1.65; margin-bottom:32px;">
+                Create your free student account to start sharing verified lecture notes, bookmarking exam guides, and collaborating across engineering branches.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; align-items:center; gap:12px; color:#e2e8f0; font-size:0.95rem;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-weight:700; font-size:0.85rem;">✓</div>
+                    <span>Instant access to CSE, IT, ECE, ME, Civil & BCA study guides</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; color:#e2e8f0; font-size:0.95rem;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-weight:700; font-size:0.85rem;">✓</div>
+                    <span>Built-in Digital E-Note & Whiteboard Diagram Canvas</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; color:#e2e8f0; font-size:0.95rem;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-weight:700; font-size:0.85rem;">✓</div>
+                    <span>Verified admin content moderation for high quality</span>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Right Side: Sober & Clean Registration Form -->
     <div class="auth-form-side">
-        <div class="auth-card" style="max-width:500px;">
-            <h2>Create Account</h2>
+        <div class="auth-card" style="max-width:520px;">
+            <div style="text-align:center; margin-bottom:24px;">
+                <div style="width:48px; height:48px; border-radius:12px; background:#eff6ff; color:#2563eb; display:inline-flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:12px;">📝</div>
+                <h2 style="font-size:1.6rem; font-weight:700; color:#0f172a; margin-bottom:6px;">Create Free Account</h2>
+                <p style="font-size:0.9rem; color:#64748b;">Fill in your details below to get started</p>
+            </div>
 
             <form method="POST" id="registerForm">
                 {% csrf_token %}
 
-                <div class="form-group">
-                    <label>Full Name</label>
-                    {{ form.first_name }}
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Full Name</label>
+                        {{ form.first_name }}
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Username</label>
+                        {{ form.username }}
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Username</label>
-                    {{ form.username }}
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Email Address</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Phone Number</label>
+                        {{ form.phone }}
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Email Address</label>
-                    {{ form.email }}
+                <div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">College / University</label>
+                        {{ form.college }}
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Semester</label>
+                        {{ form.semester }}
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    {{ form.phone }}
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Password</label>
+                        {{ form.password }}
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600; color:#334155; margin-bottom:6px; display:block;">Confirm Password</label>
+                        {{ form.confirm_password }}
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>College / University</label>
-                    {{ form.college }}
-                </div>
-
-                <div class="form-group">
-                    <label>Semester</label>
-                    {{ form.semester }}
-                </div>
-
-                <div class="form-group">
-                    <label>Password</label>
-                    {{ form.password }}
-                </div>
-
-                <div class="form-group">
-                    <label>Confirm Password</label>
-                    {{ form.confirm_password }}
-                </div>
-
-                <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">
-                    Create Account
+                <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:12px 20px; font-size:0.95rem; font-weight:600; margin-top:8px; border-radius:8px;">
+                    Complete Registration →
                 </button>
 
-                <div class="auth-footer">
-                    <p>Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+                <div class="auth-footer" style="margin-top:20px; padding-top:16px; border-top:1px solid #f1f5f9; text-align:center; font-size:0.9rem; color:#64748b;">
+                    Already have an account? <a href="{% url 'login' %}" style="color:#2563eb; font-weight:600; text-decoration:none;">Log in here</a>
                 </div>
             </form>
         </div>
@@ -71,7 +109,6 @@
 </div>
 
 <script>
-    // Enable instant Enter key form submission from any input field
     document.querySelectorAll('#registerForm input').forEach(input => {
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
