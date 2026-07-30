@@ -140,17 +140,19 @@ details = [
     ('University:', 'Lovely Professional University (LPU)'),
     ('Course:', 'B.Tech Computer Science Engineering'),
     ('Semester:', '7th Semester'),
-    ('GitHub:', 'github.com/Ayush12708/e-notes-sharing-application'),
+    ('AWS EC2 URL:', 'http://23.20.190.164'),
+    ('AWS RDS Host:', 'dbstudyverse.c6nwkq8cuodu.us-east-1.rds.amazonaws.com'),
+    ('GitHub Repo:', 'github.com/Ayush12708/e-notes-sharing-application'),
     ('Date:', 'July 2026'),
 ]
 
 for label, value in details:
-    pdf.set_font('Helvetica', 'B', 11)
+    pdf.set_font('Helvetica', 'B', 10)
     pdf.set_text_color(71, 85, 105)
-    pdf.cell(45, 8, label, align='R')
-    pdf.set_font('Helvetica', '', 11)
+    pdf.cell(45, 7.5, label, align='R')
+    pdf.set_font('Helvetica', '', 10)
     pdf.set_text_color(30, 41, 59)
-    pdf.cell(0, 8, f'  {value}', new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 7.5, f'  {value}', new_x="LMARGIN", new_y="NEXT")
 
 # TABLE OF CONTENTS
 pdf.add_page()
@@ -184,7 +186,7 @@ pdf.body_text(
     'StudyVerse is a full-stack web-based E-Notes Sharing Application designed to allow college and university students to upload, share, browse, and manage academic study materials such as lecture notes, PDF documents, and digitally-created e-notes. The platform enables peer-to-peer knowledge exchange across multiple engineering branches and semesters with features like bookmarking, commenting, likes, admin content moderation, and real-time view tracking.'
 )
 pdf.body_text(
-    'The application follows the Django MVT (Model-View-Template) architectural pattern and uses MySQL as its production database managed via MySQL Workbench, making it a robust, scalable, and secure platform for academic collaboration.'
+    'The application follows the Django MVT (Model-View-Template) architectural pattern and is deployed live on AWS EC2 (Ubuntu 24.04, Nginx, Gunicorn) backed by an AWS RDS MySQL 8.0 production database instance.'
 )
 pdf.body_text('Tagline: "Empowering Minds, Sharing Knowledge"')
 
@@ -212,7 +214,7 @@ objectives = [
     'Allow users to like, bookmark, and comment on notes for academic discussion.',
     'Track real-time note view counts and display live statistics.',
     'Provide secure multi-user authentication with concurrent session handling.',
-    'Store all data in MySQL database managed via MySQL Workbench.',
+    'Deploy cloud infrastructure on AWS EC2 with AWS RDS MySQL Database.',
 ]
 for i, obj in enumerate(objectives, 1):
     pdf.body_text(f'{i}. {obj}')
@@ -223,38 +225,40 @@ pdf.chapter_title('4. Technology Stack')
 pdf.add_table(
     ['Layer', 'Technology', 'Purpose'],
     [
-        ['Backend', 'Django 5.x (Python)', 'Server-side logic, ORM, auth'],
-        ['Frontend', 'HTML5, CSS3, JavaScript', 'Templates, responsive UI'],
-        ['Database', 'MySQL 8.0 (Workbench)', 'Production data storage'],
-        ['MySQL Driver', 'PyMySQL', 'Python-MySQL interface'],
+        ['Backend', 'Django 6.0 (Python 3.12)', 'Server-side logic, ORM, auth'],
+        ['Cloud Server', 'AWS EC2 (Ubuntu 24.04)', 'Virtual machine server'],
+        ['Cloud Database', 'AWS RDS MySQL 8.0', 'Production relational database'],
+        ['Web Server', 'Nginx 1.24 + Gunicorn', 'Reverse proxy & WSGI daemon'],
+        ['Frontend', 'HTML5, CSS3, JavaScript', 'Templates, single-card UI design'],
         ['CSS', 'Custom Design System', '1300+ lines hand-crafted CSS'],
-        ['Fonts', 'Google Fonts (Poppins)', 'Modern typography'],
-        ['Version Control', 'Git + GitHub', 'Source code management'],
-        ['Deployment', 'Gunicorn + WhiteNoise', 'WSGI server + static files'],
+        ['Serverless', 'Vercel Serverless', 'Cloud preview deployment'],
+        ['Deployment Script', 'deploy_ec2.sh', '1-command automated AWS setup'],
     ],
     col_widths=[35, 55, 90]
 )
 
 pdf.section_title('Python Dependencies')
-pdf.body_text('requirements.txt: django, gunicorn, whitenoise, pymysql')
+pdf.body_text('requirements.txt: django, gunicorn, whitenoise, pymysql, fpdf2')
 
 # 5. SYSTEM ARCHITECTURE
 pdf.chapter_title('5. System Architecture')
 pdf.section_title('5.1 Django MVT Flow')
-pdf.body_text('Client (Browser) -> URL Dispatcher (config/urls.py) -> Views (accounts, notes, dashboard, home) -> Models (ORM queries to MySQL) + Templates (HTML rendering) -> HTTP Response back to Client')
+pdf.body_text('Client Browser -> Nginx Reverse Proxy (Port 80) -> Gunicorn WSGI Daemon -> Django URL Dispatcher -> Views -> Models (ORM queries to AWS RDS MySQL) + Templates -> Rendered Response back to Client')
 pdf.ln(2)
 
 pdf.section_title('5.2 Project Directory Structure')
 dirs = [
-    'config/          - Project settings, URLs, WSGI',
+    'config/          - Project settings, URLs, WSGI (AWS RDS & MySQL fallback)',
     'accounts/        - User auth: models, views, forms, signals, admin',
-    'notes/           - Core CRUD: models, views, forms, URLs',
-    'dashboard/       - Student dashboard: views, URLs',
-    'home/            - Landing page: views, URLs',
-    'templates/       - HTML templates (base, accounts, notes, dashboard)',
+    'notes/           - Core CRUD: models, views, whiteboard canvas, moderation',
+    'dashboard/       - Student dashboard: views, URLs, real-time metrics',
+    'home/            - Landing page: views, URLs, department grid',
+    'templates/       - Single-card UI templates (accounts, notes, dashboard)',
+    'deploy_ec2.sh    - Automated 1-command AWS EC2 deployment script',
+    'generate_report_pdf.py - Standalone FPDF2 PDF report generator script',
+    'vercel.json      - Vercel serverless deployment routing file',
     'static/css/      - Custom CSS design system (1300+ lines)',
-    'static/js/       - Client-side JavaScript',
-    'media/notes/     - Uploaded note files (PDF, DOCX, etc.)',
+    'media/notes/     - Uploaded note files (PDF, DOCX, PPTX, images)',
 ]
 for d in dirs:
     pdf.bullet(d)
