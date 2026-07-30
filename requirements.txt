@@ -2,3 +2,6 @@ django
 gunicorn
 whitenoise
 pymysql
+django-storages
+boto3
+fpdf2
