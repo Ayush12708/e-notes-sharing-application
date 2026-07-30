@@ -66,12 +66,11 @@ def register(request):
                 password=form.cleaned_data['password']
             )
 
-            Profile.objects.create(
-                user=user,
-                phone=form.cleaned_data.get('phone', ''),
-                college=form.cleaned_data.get('college', ''),
-                semester=form.cleaned_data.get('semester', 1)
-            )
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.phone = form.cleaned_data.get('phone', '')
+            profile.college = form.cleaned_data.get('college', '')
+            profile.semester = form.cleaned_data.get('semester', 1) or 1
+            profile.save()
 
             # Automatically log the user in immediately after registration!
             login(request, user)
