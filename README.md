@@ -1,69 +1,75 @@
 # 🚀 StudyVerse – Empowering Minds, Sharing Knowledge
 
-[![Live Website](https://img.shields.io/badge/Render-Live%20Demo-brightgreen?style=for-the-badge&logo=render&logoColor=white)](https://notehub-vthi.onrender.com/)
+[![AWS EC2 Live](https://img.shields.io/badge/AWS-EC2%20Live%20Demo-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](http://23.20.190.164)
+[![AWS RDS MySQL](https://img.shields.io/badge/AWS-RDS%20MySQL%208.0-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)](http://23.20.190.164)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://e-notes-sharing-application.vercel.app)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ayush12708/e-notes-sharing-application)
 ![Django](https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-Vanilla-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
-> 🚀 **Live Production Deployment**: [https://notehub-vthi.onrender.com/](https://notehub-vthi.onrender.com/)
-> 
-> **StudyVerse** (*"Empowering Minds, Sharing Knowledge"*) is a modern, full-featured web application designed for university students to share, discover, type, draw, and download academic study notes, lecture guides, and exam preparation materials in real-time.
+> 🌐 **AWS EC2 Production Live App**: [http://23.20.190.164](http://23.20.190.164)  
+> 🗄️ **AWS RDS Production Database**: `dbstudyverse.c6nwkq8cuodu.us-east-1.rds.amazonaws.com`  
+> ⚡ **Vercel Live App**: [https://e-notes-sharing-application.vercel.app](https://e-notes-sharing-application.vercel.app)  
+> 📄 **Project PDF Report**: [StudyVerse_Project_Report.pdf](./StudyVerse_Project_Report.pdf)  
+>
+> **StudyVerse** (*"Empowering Minds, Sharing Knowledge"*) is a full-stack, enterprise-grade web application designed for university students to upload, create, search, bookmark, and discuss academic study notes, lecture guides, and exam preparation materials in real-time.
 
 ---
 
 ## 🔑 Demo Account Credentials
 
-You can test the live application instantly on Render using any of the following accounts:
+You can log into the live AWS application instantly using any of the following accounts:
 
-| Username | Password | Account Role |
-| :--- | :--- | :--- |
-| **`ayush`** | **`ayush123`** | Student User |
-| **`admin`** | **`admin123`** | Admin / Superuser |
-| **`bala`** | **`bala123`** | Student User |
+| Username | Password | Account Role | Access Rights |
+| :--- | :--- | :--- | :--- |
+| **`admin`** | **`admin123`** | **Admin / Superuser** | Access to [🛠 Admin Moderation Panel](http://23.20.190.164/notes/admin-dashboard/) |
+| **`ayush`** | **`ayush123`** | Student User | Upload notes, e-note whiteboard, bookmarks, comments |
+| **`bala`** | **`bala123`** | Student User | Upload notes, e-note whiteboard, bookmarks, comments |
 
-*Or register a new account on [https://notehub-vthi.onrender.com/accounts/register/](https://notehub-vthi.onrender.com/accounts/register/) (auto-logs in immediately upon registration)!*
+*Or register a new account on [http://23.20.190.164/accounts/register/](http://23.20.190.164/accounts/register/)!*
 
 ---
 
-## 🌟 Key Features & Highlights
+## 🌟 Key Features & Architectural Highlights
 
-### 🎨 1. Modern Glassmorphic UI & Responsive Design
-- Clean, state-of-the-art UI featuring CSS custom properties, glassmorphism, responsive data tables, status badges, and micro-animations.
-- User dropdown header menu with profile editing and single-click logout.
+### 🛠️ 1. Complete Cloud Infrastructure (AWS EC2 + AWS RDS MySQL)
+- **AWS EC2 Virtual Server (`23.20.190.164`)**: Runs Ubuntu 24.04, Nginx 1.24 reverse proxy, Gunicorn WSGI daemon (`studyverse.service`), and WhiteNoise static asset pipeline.
+- **AWS RDS MySQL 8.0 (`dbstudyverse...`)**: Production relational database instance storing all users, profile metadata, notes, bookmarks, comments, and sessions.
+- **1-Command Deployment Script ([`deploy_ec2.sh`](./deploy_ec2.sh))**: Automated shell script to provision system packages, MySQL schema, Gunicorn systemd service, and Nginx configuration.
 
-### ✍️ 2. Dedicated E-Notes Studio & Interactive Whiteboard Canvas
-- **Digital E-Notes Creation Studio (`/notes/create-online/`)**: Type, format, and publish digital notes, definitions, and code cheatsheets.
-- **🎨 Interactive Whiteboard Canvas**: Sketch handwritten diagrams with Paint Brush, custom color swatches, adjustable stroke sizes (Thin, Medium, Thick), and Eraser tool.
-- **📤 Document File Upload (`/notes/upload/`)**: Dedicated basic upload page supporting PDFs, Word (`.docx`), PowerPoint (`.pptx`), Images (`.png`, `.jpg`), Text (`.txt`), and ZIP archives.
+### 🎨 2. Seamless Single-Card UI & Sober Academic Aesthetics
+- **Sober Academic Theme**: Professional slate and royal blue palette (`#1e293b` & `#2563eb`) tailored for academic focus.
+- **Unified Single-Card Auth Pages**: Centered, partition-free login and registration cards with brand badges and high-contrast typography.
 
-### 🛡️ 3. Unsaved Changes Guard & Save as Draft
-- **Quit Protection Guard**: Custom modal alert (`⚠️ Unsaved Changes`) prevents accidental navigation or tab closing when editing notes without saving.
-- **💾 Save as Draft**: Students can save progress as drafts (`📝 Draft`) and resume editing at any time.
+### 🛡️ 3. Admin Content Moderation & Verification Workflow
+- **Interactive Status Filters**: Filter submissions by **All**, **⏳ Pending**, **✔ Approved**, **✖ Rejected**, and **📝 Drafts**.
+- **Document Preview Button (`👁 View Note`)**: Allows admins to inspect uploaded files or digital e-notes before approving or rejecting.
+- **4-State Moderation Lifecycle**: `Draft` → `Pending` → `Approved` / `Rejected`.
 
-### ⚡ 4. 100% Real-Time Likes & Downloads Analytics
-- **Live Downloads Counter**: Real-time counter increments whenever a document is viewed or downloaded.
-- **❤️ Dynamic Likes & Bookmarks**: Track genuine upvotes and saved bookmarks with live updates.
-- **💬 Student Comment Discussions**: Interactive comment threads on each study note.
+### ✍️ 4. Digital E-Notes Studio & Interactive Whiteboard Canvas
+- **E-Notes Studio (`/notes/create-online/`)**: Type, format, and publish digital code cheatsheets and lecture notes.
+- **🎨 Interactive Whiteboard Canvas**: Draw diagrams using Paint Brush, color swatches, adjustable stroke widths, and Eraser tool.
+- **📤 Document Upload (`/notes/upload/`)**: Upload PDF, Word (`.docx`), PowerPoint (`.pptx`), Images (`.png`), Text (`.txt`), and ZIP files.
 
-### 🛡️ 5. Admin Approval & Verification Workflow
-- All new user submissions undergo Admin review (`Pending` status) before being publicly visible in `Browse Notes`.
-- Staff members can approve or reject submissions from the **[🛠 Admin Panel](https://notehub-vthi.onrender.com/notes/admin-dashboard/)**.
-
-### 🔒 6. Landing Page & Course Previews
-- Guests can preview course note titles and subject categories on the home page.
-- Opening full materials requires logging in or creating a free account.
+### ⚡ 5. Real-Time View Counter & Social Features
+- **Atomic Real-Time View Counter**: Uses Django `F()` expressions (`UPDATE notes_note SET views = views + 1`) to eliminate race conditions on high concurrency.
+- **❤️ Bookmarks & Likes**: Save favorite notes with instant AJAX updates and dedicated Bookmarks page.
+- **💬 Student Discussion Threads**: Interactive comment section on note detail pages.
+- **🔄 Django Signals (`accounts/signals.py`)**: `post_save` signal on `User` model automatically creates profile records regardless of creation origin (web, admin, shell, workbench).
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Backend**: Python 3.13, Django 6.0
-- **Production Server**: Gunicorn, Whitenoise (Static Asset Serving)
-- **Frontend**: HTML5, Vanilla CSS3 (Custom Design System), JavaScript (ES6+ HTML5 Canvas API)
-- **Database**: SQLite / PostgreSQL compatible
-- **Deployment Platform**: Render (`https://notehub-vthi.onrender.com/`)
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Backend** | Python 3.12, Django 6.0 | Server-side logic, ORM, authentication |
+| **Database** | AWS RDS MySQL 8.0, PyMySQL | Production database instance |
+| **Web Server** | Nginx 1.24, Gunicorn WSGI | Reverse proxy & application server |
+| **Cloud Hosting** | AWS EC2 (Ubuntu 24.04), Vercel | Infrastructure & serverless hosting |
+| **Frontend** | HTML5, Vanilla CSS3, JavaScript | Modern responsive design system |
+| **Tooling** | MySQL Workbench, Git, PDFKit/FPDF2 | Database management & project report generation |
 
 ---
 
@@ -71,26 +77,26 @@ You can test the live application instantly on Render using any of the following
 
 ```
 NoteHub/
-├── accounts/               # User authentication, profiles, & forms
+├── accounts/               # User authentication, profiles, signals, & forms
 ├── config/                 # Project configuration (settings.py, urls.py, wsgi.py)
-├── dashboard/              # User dashboard & real-time analytics calculations
-├── home/                   # Landing page, public previews, & about section
-├── notes/                  # Core note models, views, whiteboard canvas, & comment logic
-│   ├── migrations/         # Database migrations
-│   ├── models.py           # Note, Bookmark, & Comment models
-│   ├── views.py            # Notes views & approval handlers
-│   └── forms.py            # NoteForm & OnlineNoteForm
-├── static/                 # CSS stylesheets & JS scripts
+├── dashboard/              # Student dashboard & real-time analytics aggregation
+├── home/                   # Landing page, public previews, & department grid
+├── notes/                  # Core note models, whiteboard canvas, views, & moderation
+├── static/                 # Custom CSS design system (1300+ lines) & JavaScript
 ├── templates/              # HTML templates (base, home, dashboard, notes, accounts)
-├── manage.py               # Django CLI utility script
-├── render.yaml             # Render deployment configuration
-├── build.sh                # Render build script
+├── deploy_ec2.sh           # Automated 1-command AWS EC2 deployment script
+├── generate_report_pdf.py  # Standalone FPDF2 PDF project report generator
+├── vercel.json             # Vercel serverless deployment routing config
+├── StudyVerse_Project_Report.md  # Detailed markdown project report
+├── StudyVerse_Project_Report.pdf # Formatted PDF project report
+├── manage.py               # Django CLI management tool
+├── requirements.txt        # Python dependencies
 └── README.md               # Project documentation
 ```
 
 ---
 
-## 🚀 Getting Started & Local Installation
+## 🚀 Local Development Setup
 
 ### 1. Clone the Repository
 ```bash
@@ -98,42 +104,35 @@ git clone https://github.com/Ayush12708/e-notes-sharing-application.git
 cd e-notes-sharing-application
 ```
 
-### 2. Create and Activate Virtual Environment
+### 2. Create Virtual Environment
 ```bash
-# On macOS / Linux:
 python3 -m venv venv
-source venv/bin/activate
-
-# On Windows:
-python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 ### 3. Install Dependencies
 ```bash
-pip install django whitenoise gunicorn
+pip install -r requirements.txt
 ```
 
-### 4. Run Database Migrations & Seed Data
+### 4. Run Migrations & Start Server
 ```bash
 python manage.py migrate
-```
-
-### 5. Run the Local Server
-```bash
 python manage.py runserver 8000
 ```
-Open your browser and navigate to `http://127.0.0.1:8000/`.
+Navigate to `http://127.0.0.1:8000/`.
 
 ---
 
-## 🌐 Live Application URL
+## 🌐 Live Production Links
 
-- **Live Website**: [https://notehub-vthi.onrender.com/](https://notehub-vthi.onrender.com/)
-- **GitHub Repository**: [https://github.com/Ayush12708/e-notes-sharing-application](https://github.com/Ayush12708/e-notes-sharing-application)
+- 🚀 **AWS EC2 Web App**: [http://23.20.190.164](http://23.20.190.164)
+- 🗄️ **AWS RDS MySQL Host**: `dbstudyverse.c6nwkq8cuodu.us-east-1.rds.amazonaws.com`
+- ⚡ **Vercel Web App**: [https://e-notes-sharing-application.vercel.app](https://e-notes-sharing-application.vercel.app)
+- 📄 **PDF Project Report**: [StudyVerse_Project_Report.pdf](./StudyVerse_Project_Report.pdf)
 
 ---
 
 ## 📝 License
 
-This project is licensed under the MIT License. Feel free to use, modify, and contribute!
+This project is licensed under the MIT License. Developed by **Ayush Kumar** (Lovely Professional University).
