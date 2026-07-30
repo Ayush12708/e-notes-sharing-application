@@ -87,10 +87,29 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database Configuration (MySQL local/remote with SQLite fallback for Vercel/Cloud)
+# Database Configuration (AWS RDS MySQL / Cloud MySQL / Localhost / SQLite Fallback)
 IS_VERCEL = bool(os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'))
 
-if not IS_VERCEL:
+DB_HOST = os.environ.get('DB_HOST') or os.environ.get('MYSQLHOST') or os.environ.get('DATABASE_HOST') or os.environ.get('RDS_HOSTNAME')
+DB_NAME = os.environ.get('DB_NAME') or os.environ.get('MYSQLDATABASE') or os.environ.get('DATABASE_NAME') or os.environ.get('RDS_DB_NAME')
+DB_USER = os.environ.get('DB_USER') or os.environ.get('MYSQLUSER') or os.environ.get('DATABASE_USER') or os.environ.get('RDS_USERNAME')
+DB_PASSWORD = os.environ.get('DB_PASSWORD') or os.environ.get('MYSQLPASSWORD') or os.environ.get('DATABASE_PASSWORD') or os.environ.get('RDS_PASSWORD')
+DB_PORT = os.environ.get('DB_PORT') or os.environ.get('MYSQLPORT') or os.environ.get('DATABASE_PORT') or os.environ.get('RDS_PORT') or '3306'
+
+if DB_HOST:
+    # Remote Cloud Database (AWS RDS / Cloud MySQL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': DB_NAME or 'notehub_db',
+            'USER': DB_USER or 'root',
+            'PASSWORD': DB_PASSWORD or '',
+            'HOST': DB_HOST,
+            'PORT': str(DB_PORT),
+        }
+    }
+elif not IS_VERCEL:
+    # Localhost Development
     try:
         import MySQLdb
         import socket
@@ -119,6 +138,7 @@ if not IS_VERCEL:
             }
         }
 else:
+    # Vercel fallback if no env vars set
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
