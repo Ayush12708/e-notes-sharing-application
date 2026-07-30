@@ -4,6 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import FileResponse, HttpResponseForbidden, JsonResponse
 from django.db.models import Q, F, Sum
 from django.contrib import messages
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 import mimetypes
 import os
 
@@ -413,6 +414,7 @@ def reject_note(request, pk):
 
 
 @login_required
+@xframe_options_sameorigin
 def view_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
     if note.status != "Approved" and not request.user.is_staff and note.uploaded_by != request.user:

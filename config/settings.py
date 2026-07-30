@@ -38,6 +38,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 
 
 # Application definition
