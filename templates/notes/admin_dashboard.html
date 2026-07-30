@@ -14,90 +14,138 @@
         </div>
     </div>
 
-    <!-- Admin Metrics Cards -->
+    <!-- Admin Metrics Cards (Clickable Filters) -->
     <div class="dashboard-cards-grid">
-        <div class="stat-card">
+        <a href="{% url 'admin_dashboard' %}?status=all" class="stat-card" style="text-decoration:none; border: {% if selected_status == 'all' %}2px solid var(--primary){% else %}1px solid var(--border-light){% endif %};">
             <div class="stat-info">
-                <span>Pending Review</span>
-                <h2>{{ pending }}</h2>
+                <span>Total Submissions</span>
+                <h2>{{ total_count }}</h2>
+            </div>
+            <div class="stat-icon" style="background:#f1f5f9; color:#475569;">📚</div>
+        </a>
+
+        <a href="{% url 'admin_dashboard' %}?status=Pending" class="stat-card" style="text-decoration:none; border: {% if selected_status == 'Pending' %}2px solid #f59e0b{% else %}1px solid var(--border-light){% endif %};">
+            <div class="stat-info">
+                <span style="color:#d97706; font-weight:600;">Pending Review</span>
+                <h2 style="color:#d97706;">{{ pending }}</h2>
             </div>
             <div class="stat-icon pending">⏳</div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a href="{% url 'admin_dashboard' %}?status=Approved" class="stat-card" style="text-decoration:none; border: {% if selected_status == 'Approved' %}2px solid #10b981{% else %}1px solid var(--border-light){% endif %};">
             <div class="stat-info">
-                <span>Approved Notes</span>
-                <h2>{{ approved }}</h2>
+                <span style="color:#059669; font-weight:600;">Approved Notes</span>
+                <h2 style="color:#059669;">{{ approved }}</h2>
             </div>
             <div class="stat-icon approved">✔</div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a href="{% url 'admin_dashboard' %}?status=Rejected" class="stat-card" style="text-decoration:none; border: {% if selected_status == 'Rejected' %}2px solid #ef4444{% else %}1px solid var(--border-light){% endif %};">
             <div class="stat-info">
-                <span>Rejected Notes</span>
-                <h2>{{ rejected }}</h2>
+                <span style="color:#dc2626; font-weight:600;">Rejected Notes</span>
+                <h2 style="color:#dc2626;">{{ rejected }}</h2>
             </div>
             <div class="stat-icon rejected">✖</div>
-        </div>
+        </a>
     </div>
 
-    <!-- Moderation Table -->
+    <!-- Moderation Table Card -->
     <div class="content-card">
-        <div class="content-card-header">
-            <h2>📄 Note Submissions</h2>
+        <div class="content-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <h2>📄 Note Submissions ({% if selected_status == 'all' %}All{% else %}{{ selected_status }}{% endif %})</h2>
+
+            <!-- Status Filter Tabs -->
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a href="{% url 'admin_dashboard' %}?status=all" class="btn-sm {% if selected_status == 'all' %}btn-sm-primary{% else %}btn-secondary{% endif %}" style="font-size:0.82rem;">
+                    All ({{ total_count }})
+                </a>
+                <a href="{% url 'admin_dashboard' %}?status=Pending" class="btn-sm {% if selected_status == 'Pending' %}btn-sm-primary{% else %}btn-secondary{% endif %}" style="font-size:0.82rem;">
+                    ⏳ Pending ({{ pending }})
+                </a>
+                <a href="{% url 'admin_dashboard' %}?status=Approved" class="btn-sm {% if selected_status == 'Approved' %}btn-sm-primary{% else %}btn-secondary{% endif %}" style="font-size:0.82rem;">
+                    ✔ Approved ({{ approved }})
+                </a>
+                <a href="{% url 'admin_dashboard' %}?status=Rejected" class="btn-sm {% if selected_status == 'Rejected' %}btn-sm-primary{% else %}btn-secondary{% endif %}" style="font-size:0.82rem;">
+                    ✖ Rejected ({{ rejected }})
+                </a>
+                <a href="{% url 'admin_dashboard' %}?status=Draft" class="btn-sm {% if selected_status == 'Draft' %}btn-sm-primary{% else %}btn-secondary{% endif %}" style="font-size:0.82rem;">
+                    📝 Drafts ({{ draft }})
+                </a>
+            </div>
         </div>
 
         <div class="table-responsive">
             <table class="modern-table">
                 <thead>
                     <tr>
-                        <th>Title</th>
+                        <th>Title & Format</th>
                         <th>Student</th>
-                        <th>Subject</th>
+                        <th>Subject & Branch</th>
                         <th>Semester</th>
                         <th>Status</th>
+                        <th>Preview</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for note in notes %}
-                    <tr>
-                        <td><strong>{{ note.title }}</strong></td>
-                        <td>{{ note.uploaded_by.username }}</td>
-                        <td>{{ note.subject }}</td>
+                    <tr style="{% if note.status == 'Pending' %}background:rgba(245, 158, 11, 0.05);{% endif %}">
+                        <td>
+                            <strong>{{ note.title }}</strong>
+                            <div>
+                                {% if note.is_online_note %}
+                                    <span style="font-size:0.75rem; background:#e0e7ff; color:var(--primary); padding:2px 8px; border-radius:10px; font-weight:600;">✍️ E-Note</span>
+                                {% else %}
+                                    <span style="font-size:0.75rem; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:10px; font-weight:600;">📎 File Upload</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <strong>{{ note.uploaded_by.first_name|default:note.uploaded_by.username }}</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">@{{ note.uploaded_by.username }}</div>
+                        </td>
+                        <td>
+                            <strong>{{ note.subject }}</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">{{ note.get_branch_display }}</div>
+                        </td>
                         <td>Semester {{ note.semester }}</td>
                         <td>
                             {% if note.status == "Approved" %}
                                 <span class="status-pill approved">✔ Approved</span>
                             {% elif note.status == "Pending" %}
-                                <span class="status-pill pending">⏳ Pending</span>
+                                <span class="status-pill pending">⏳ Pending Review</span>
+                            {% elif note.status == "Draft" %}
+                                <span class="status-pill" style="background:#f1f5f9; color:#64748b;">📝 Draft</span>
                             {% else %}
                                 <span class="status-pill rejected">✖ Rejected</span>
                             {% endif %}
                         </td>
                         <td>
-                            {% if note.status == "Pending" %}
-                            <div class="action-group">
-                                <a href="{% url 'approve_note' note.id %}" class="btn-sm btn-sm-primary">
-                                    ✔ Approve
-                                </a>
-                                <a href="{% url 'reject_note' note.id %}" class="btn-sm btn-sm-danger">
-                                    ✖ Reject
-                                </a>
+                            <a href="{% url 'note_detail' note.id %}" target="_blank" class="btn-sm btn-secondary" style="font-size:0.8rem; white-space:nowrap;">
+                                👁 View Note
+                            </a>
+                        </td>
+                        <td>
+                            <div class="action-group" style="flex-wrap:nowrap;">
+                                {% if note.status != "Approved" %}
+                                    <a href="{% url 'approve_note' note.id %}" class="btn-sm btn-sm-primary" style="white-space:nowrap; padding:6px 12px; font-size:0.82rem;">
+                                        ✔ Approve
+                                    </a>
+                                {% endif %}
+                                {% if note.status != "Rejected" %}
+                                    <a href="{% url 'reject_note' note.id %}" class="btn-sm btn-sm-danger" style="white-space:nowrap; padding:6px 12px; font-size:0.82rem;">
+                                        ✖ Reject
+                                    </a>
+                                {% endif %}
                             </div>
-                            {% elif note.status == "Approved" %}
-                                <span class="status-pill approved">Approved</span>
-                            {% else %}
-                                <span class="status-pill rejected">Rejected</span>
-                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📋</div>
-                                <p>No note submissions found.</p>
+                        <td colspan="7">
+                            <div class="empty-state" style="padding:40px 20px; text-align:center;">
+                                <div class="empty-state-icon" style="font-size:2.5rem; margin-bottom:10px;">📋</div>
+                                <p style="font-size:1rem; color:var(--text-muted);">No note submissions found for status "{{ selected_status }}".</p>
                             </div>
                         </td>
                     </tr>

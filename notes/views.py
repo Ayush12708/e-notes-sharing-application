@@ -355,13 +355,20 @@ def bookmarks_list(request):
 
 @staff_member_required
 def admin_dashboard(request):
+    status_filter = request.GET.get('status', 'all')
     notes = Note.objects.all().order_by("-uploaded_at")
+
+    if status_filter in ['Pending', 'Approved', 'Rejected', 'Draft']:
+        notes = notes.filter(status=status_filter)
 
     context = {
         "notes": notes,
+        "selected_status": status_filter,
+        "total_count": Note.objects.count(),
         "pending": Note.objects.filter(status="Pending").count(),
         "approved": Note.objects.filter(status="Approved").count(),
         "rejected": Note.objects.filter(status="Rejected").count(),
+        "draft": Note.objects.filter(status="Draft").count(),
     }
 
     return render(request, "notes/admin_dashboard.html", context)
@@ -372,7 +379,10 @@ def approve_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
     note.status = "Approved"
     note.save()
-    messages.success(request, f"Note '{note.title}' has been approved.")
+    messages.success(request, f"Note '{note.title}' has been approved and published to Browse Notes!")
+    referer = request.META.get('HTTP_REFERER')
+    if referer and 'admin-dashboard' in referer:
+        return redirect(referer)
     return redirect("admin_dashboard")
 
 
@@ -382,6 +392,9 @@ def reject_note(request, pk):
     note.status = "Rejected"
     note.save()
     messages.info(request, f"Note '{note.title}' has been rejected.")
+    referer = request.META.get('HTTP_REFERER')
+    if referer and 'admin-dashboard' in referer:
+        return redirect(referer)
     return redirect("admin_dashboard")
 
 

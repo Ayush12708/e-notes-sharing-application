@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>StudyVerse — Project Report</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #1e293b;
+    line-height: 1.7;
+    padding: 50px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    font-size: 13px;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin: 30px 0 10px 0;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #2563eb;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e40af;
+    margin: 28px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #334155;
+    margin: 20px 0 8px 0;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    margin: 14px 0 6px 0;
+}
+
+p {
+    margin: 8px 0;
+    color: #334155;
+}
+
+strong {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+em {
+    font-style: italic;
+    color: #64748b;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #e2e8f0;
+    margin: 24px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 12.5px;
+}
+
+th {
+    background: #1e40af;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+td {
+    padding: 8px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    vertical-align: top;
+}
+
+tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tr:hover {
+    background: #eff6ff;
+}
+
+code {
+    background: #f1f5f9;
+    color: #b91c1c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+}
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 14px 0;
+    overflow-x: auto;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+pre code {
+    background: none;
+    color: #e2e8f0;
+    padding: 0;
+}
+
+ul, ol {
+    margin: 10px 0;
+    padding-left: 24px;
+}
+
+li {
+    margin: 4px 0;
+    color: #334155;
+}
+
+blockquote {
+    border-left: 4px solid #2563eb;
+    padding: 10px 16px;
+    margin: 14px 0;
+    background: #eff6ff;
+    color: #1e40af;
+    border-radius: 0 6px 6px 0;
+}
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.cover-page {
+    text-align: center;
+    padding: 80px 20px;
+    page-break-after: always;
+}
+
+@media print {
+    body {
+        padding: 30px 40px;
+        font-size: 12px;
+    }
+    h2 {
+        page-break-before: auto;
+    }
+    pre, table {
+        page-break-inside: avoid;
+    }
+}
+</style>
+</head>
+<body>
+<h1 id="studyverse-e-notes-sharing-application">StudyVerse — E-Notes Sharing Application</h1>
+<h2 id="detailed-project-report">Detailed Project Report</h2>
+<hr />
+<p><strong>Project Title:</strong> StudyVerse — E-Notes Sharing Application<br />
+<strong>Developed By:</strong> Ayush Kumar<br />
+<strong>University:</strong> Lovely Professional University (LPU)<br />
+<strong>Course:</strong> B.Tech Computer Science Engineering<br />
+<strong>Semester:</strong> 7th Semester<br />
+<strong>GitHub:</strong> https://github.com/Ayush12708/e-notes-sharing-application<br />
+<strong>Date:</strong> July 2026  </p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-introduction">Introduction</a></li>
+<li><a href="#2-problem-statement">Problem Statement</a></li>
+<li><a href="#3-objectives">Objectives</a></li>
+<li><a href="#4-technology-stack">Technology Stack</a></li>
+<li><a href="#5-system-architecture">System Architecture</a></li>
+<li><a href="#6-database-design">Database Design (ER Diagram &amp; Schema)</a></li>
+<li><a href="#7-module-description">Module Description</a></li>
+<li><a href="#8-functional-requirements">Functional Requirements</a></li>
+<li><a href="#9-non-functional-requirements">Non-Functional Requirements</a></li>
+<li><a href="#10-implementation-details">Implementation Details</a></li>
+<li><a href="#11-url-routing-structure">URL Routing Structure</a></li>
+<li><a href="#12-screenshots--user-interface">Screenshots &amp; User Interface</a></li>
+<li><a href="#13-testing--validation">Testing &amp; Validation</a></li>
+<li><a href="#14-future-scope">Future Scope</a></li>
+<li><a href="#15-conclusion">Conclusion</a></li>
+</ol>
+<hr />
+<h2 id="1-introduction">1. Introduction</h2>
+<p><strong>StudyVerse</strong> is a full-stack web-based E-Notes Sharing Application designed to allow college and university students to upload, share, browse, and manage academic study materials such as lecture notes, PDF documents, and digitally-created e-notes. The platform enables peer-to-peer knowledge exchange across multiple engineering branches and semesters with features like bookmarking, commenting, likes, admin content moderation, and real-time view tracking.</p>
+<p>The application follows the <strong>Django MVT (Model-View-Template)</strong> architectural pattern and uses <strong>MySQL</strong> as its production database managed via MySQL Workbench, making it a robust, scalable, and secure platform for academic collaboration.</p>
+<p><strong>Tagline:</strong> <em>"Empowering Minds, Sharing Knowledge"</em></p>
+<hr />
+<h2 id="2-problem-statement">2. Problem Statement</h2>
+<p>College students often face significant challenges in accessing quality study materials:</p>
+<ul>
+<li><strong>Fragmented Resources:</strong> Notes are scattered across WhatsApp groups, Google Drive links, and personal devices with no centralized access point.</li>
+<li><strong>No Quality Control:</strong> Shared materials often lack verification, leading to incorrect or incomplete content being circulated before exams.</li>
+<li><strong>Limited Discovery:</strong> Students struggle to find notes for specific subjects, semesters, or branches — especially across different colleges.</li>
+<li><strong>No Collaboration:</strong> Traditional file sharing provides no mechanism for discussions, feedback, or community-driven quality improvement.</li>
+<li><strong>Loss of Materials:</strong> Students frequently lose access to important notes when WhatsApp groups are deleted or Drive links expire.</li>
+</ul>
+<p><strong>StudyVerse solves these problems</strong> by providing a permanent, centralized, admin-verified platform where students can upload, discover, bookmark, and discuss study materials with real-time analytics.</p>
+<hr />
+<h2 id="3-objectives">3. Objectives</h2>
+<ol>
+<li><strong>Centralized Note Repository</strong> — Build a single platform where students from any branch can upload and access notes.</li>
+<li><strong>Multi-Format Support</strong> — Support file uploads (PDF, DOCX, PPTX, images) and online rich-text e-note creation with a whiteboard drawing canvas.</li>
+<li><strong>Admin Content Moderation</strong> — Implement a verification workflow (Pending → Approved / Rejected) ensuring content quality.</li>
+<li><strong>Smart Search &amp; Filtering</strong> — Enable students to find notes by subject, branch, semester, keyword search, and sorting options.</li>
+<li><strong>Social Engagement Features</strong> — Allow users to like, bookmark, and comment on notes to foster academic discussion.</li>
+<li><strong>Real-Time Analytics</strong> — Track note view counts and display live statistics on the platform.</li>
+<li><strong>Multi-User Authentication</strong> — Provide secure registration, login, profile management, and concurrent session handling.</li>
+<li><strong>MySQL Integration</strong> — Store all data in a production-grade MySQL database (managed via MySQL Workbench).</li>
+</ol>
+<hr />
+<h2 id="4-technology-stack">4. Technology Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Backend Framework</strong></td>
+<td>Django 5.x (Python)</td>
+<td>Server-side logic, ORM, URL routing, authentication</td>
+</tr>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>HTML5, CSS3, JavaScript</td>
+<td>Templates, responsive UI, interactive components</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>MySQL 8.0 (via MySQL Workbench)</td>
+<td>Production data storage for users, notes, sessions</td>
+</tr>
+<tr>
+<td><strong>MySQL Driver</strong></td>
+<td>PyMySQL</td>
+<td>Python interface to connect Django with MySQL</td>
+</tr>
+<tr>
+<td><strong>CSS Framework</strong></td>
+<td>Custom CSS Design System</td>
+<td>1300+ lines of hand-crafted responsive CSS</td>
+</tr>
+<tr>
+<td><strong>Fonts</strong></td>
+<td>Google Fonts (Poppins)</td>
+<td>Modern typography across the platform</td>
+</tr>
+<tr>
+<td><strong>Version Control</strong></td>
+<td>Git + GitHub</td>
+<td>Source code management and collaboration</td>
+</tr>
+<tr>
+<td><strong>Deployment Config</strong></td>
+<td>Gunicorn + WhiteNoise</td>
+<td>Production WSGI server and static file serving</td>
+</tr>
+<tr>
+<td><strong>IDE</strong></td>
+<td>VS Code / Cursor IDE</td>
+<td>Development environment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="python-dependencies-requirementstxt">Python Dependencies (<code>requirements.txt</code>):</h3>
+<pre class="codehilite"><code>django
+gunicorn
+whitenoise
+pymysql
+</code></pre>
+
+<hr />
+<h2 id="5-system-architecture">5. System Architecture</h2>
+<h3 id="51-django-mvt-architecture">5.1 Django MVT Architecture</h3>
+<pre class="codehilite"><code>┌──────────────────────────────────────────────────────┐
+│                    CLIENT (Browser)                   │
+│         HTML/CSS/JS ← Django Templates               │
+└──────────────────────┬───────────────────────────────┘
+                       │ HTTP Request
+                       ▼
+┌──────────────────────────────────────────────────────┐
+│                   URL DISPATCHER                      │
+│              config/urls.py → App URLs                │
+└──────────────────────┬───────────────────────────────┘
+                       │ Route to View
+                       ▼
+┌──────────────────────────────────────────────────────┐
+│                     VIEWS                             │
+│    accounts/views.py | notes/views.py |               │
+│    dashboard/views.py | home/views.py                 │
+└──────────┬────────────────────────────┬──────────────┘
+           │ Query Models               │ Render Template
+           ▼                            ▼
+┌─────────────────────┐    ┌──────────────────────────┐
+│   MODELS (ORM)      │    │     TEMPLATES            │
+│   User, Profile,    │    │   base.html, index.html  │
+│   Note, Bookmark,   │    │   dashboard.html,        │
+│   Comment           │    │   browse_notes.html, etc │
+└─────────┬───────────┘    └──────────────────────────┘
+          │ SQL Queries
+          ▼
+┌──────────────────────────────────────────────────────┐
+│              MySQL DATABASE (notehub_db)              │
+│     auth_user | accounts_profile | notes_note        │
+│     notes_bookmark | notes_comment | django_session  │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+
+<h3 id="52-project-directory-structure">5.2 Project Directory Structure</h3>
+<pre class="codehilite"><code>NoteHub/
+├── config/                  # Project configuration
+│   ├── settings.py          # Django settings (DB, apps, middleware)
+│   ├── urls.py              # Root URL configuration
+│   └── wsgi.py              # WSGI entry point
+│
+├── accounts/                # User Authentication Module
+│   ├── models.py            # Profile model (extends User)
+│   ├── views.py             # Register, Login, Logout, Profile views
+│   ├── forms.py             # RegisterForm, UserUpdateForm, ProfileUpdateForm
+│   ├── signals.py           # Auto-create Profile on User creation
+│   ├── admin.py             # Django admin with Profile inline
+│   └── urls.py              # Auth URL routes
+│
+├── notes/                   # Core Notes Module
+│   ├── models.py            # Note, Bookmark, Comment models
+│   ├── views.py             # CRUD, Browse, Admin Dashboard, Like/Bookmark
+│   ├── forms.py             # NoteForm, OnlineNoteForm
+│   └── urls.py              # Notes URL routes
+│
+├── dashboard/               # Student Dashboard Module
+│   ├── views.py             # Dashboard stats and data aggregation
+│   └── urls.py              # Dashboard URL route
+│
+├── home/                    # Landing Page Module
+│   ├── views.py             # Homepage with live stats
+│   └── urls.py              # Home URL route
+│
+├── templates/               # HTML Templates
+│   ├── base.html            # Master layout (navbar, footer)
+│   ├── home/index.html      # Landing page
+│   ├── accounts/            # login.html, register.html, profile.html
+│   ├── dashboard/           # dashboard.html
+│   └── notes/               # browse, detail, upload, edit, delete, etc.
+│
+├── static/
+│   ├── css/style.css        # Complete design system (1300+ lines)
+│   └── js/script.js         # Client-side interactivity
+│
+├── media/notes/             # Uploaded note files (PDF, DOCX, etc.)
+├── manage.py                # Django management utility
+└── requirements.txt         # Python dependencies
+</code></pre>
+
+<hr />
+<h2 id="6-database-design">6. Database Design</h2>
+<h3 id="61-entity-relationship-er-diagram">6.1 Entity-Relationship (ER) Diagram</h3>
+<pre class="codehilite"><code>┌─────────────────┐       1:1        ┌──────────────────┐
+│    auth_user     │─────────────────▶│ accounts_profile  │
+│─────────────────│                   │──────────────────│
+│ id (PK)         │                   │ id (PK)          │
+│ username        │                   │ user_id (FK→User)│
+│ password (hash) │                   │ phone            │
+│ email           │                   │ college          │
+│ first_name      │                   │ semester         │
+│ last_name       │                   └──────────────────┘
+│ is_staff        │
+│ is_active       │
+│ date_joined     │
+└─────┬───────────┘
+      │ 1:N
+      ▼
+┌─────────────────┐       N:M        ┌──────────────────┐
+│   notes_note    │──────────────────▶│ notes_note_likes │
+│─────────────────│                   │──────────────────│
+│ id (PK)         │                   │ note_id (FK)     │
+│ title           │                   │ user_id (FK)     │
+│ subject         │                   └──────────────────┘
+│ branch          │
+│ semester        │       1:N        ┌──────────────────┐
+│ description     │─────────────────▶│ notes_bookmark   │
+│ content (text)  │                   │──────────────────│
+│ drawing_data    │                   │ id (PK)          │
+│ is_online_note  │                   │ user_id (FK)     │
+│ file (upload)   │                   │ note_id (FK)     │
+│ uploaded_by(FK) │                   │ created_at       │
+│ uploaded_at     │                   └──────────────────┘
+│ downloads       │
+│ views           │       1:N        ┌──────────────────┐
+│ status          │─────────────────▶│ notes_comment    │
+└─────────────────┘                   │──────────────────│
+                                      │ id (PK)          │
+                                      │ note_id (FK)     │
+                                      │ user_id (FK)     │
+                                      │ text             │
+                                      │ created_at       │
+                                      └──────────────────┘
+</code></pre>
+
+<h3 id="62-mysql-table-schema">6.2 MySQL Table Schema</h3>
+<table>
+<thead>
+<tr>
+<th>Table Name</th>
+<th>Fields</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth_user</code></td>
+<td>id, username, password, email, first_name, last_name, is_staff, is_active, date_joined</td>
+<td>Django's built-in user authentication table</td>
+</tr>
+<tr>
+<td><code>accounts_profile</code></td>
+<td>id, user_id (FK), phone, college, semester</td>
+<td>Extended user profile (1:1 with auth_user)</td>
+</tr>
+<tr>
+<td><code>notes_note</code></td>
+<td>id, title, subject, branch, semester, description, content, drawing_data, is_online_note, file, uploaded_by_id (FK), uploaded_at, downloads, views, status</td>
+<td>Core notes/study materials table</td>
+</tr>
+<tr>
+<td><code>notes_bookmark</code></td>
+<td>id, user_id (FK), note_id (FK), created_at</td>
+<td>User's saved/bookmarked notes</td>
+</tr>
+<tr>
+<td><code>notes_comment</code></td>
+<td>id, note_id (FK), user_id (FK), text, created_at</td>
+<td>Discussion comments on notes</td>
+</tr>
+<tr>
+<td><code>notes_note_likes</code></td>
+<td>id, note_id (FK), user_id (FK)</td>
+<td>Many-to-many likes on notes</td>
+</tr>
+<tr>
+<td><code>django_session</code></td>
+<td>session_key, session_data, expire_date</td>
+<td>Active user login sessions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-module-description">7. Module Description</h2>
+<h3 id="module-1-accounts-user-authentication-profile-management">Module 1: Accounts (User Authentication &amp; Profile Management)</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Registration</strong></td>
+<td>New users register with username, email, password, phone, college, and semester. Passwords are hashed using Django's PBKDF2 algorithm.</td>
+</tr>
+<tr>
+<td><strong>Login</strong></td>
+<td>Case-insensitive username matching with secure authentication. Supports redirect after login (<code>?next=</code> parameter).</td>
+</tr>
+<tr>
+<td><strong>Logout</strong></td>
+<td>Destroys session and redirects to home page.</td>
+</tr>
+<tr>
+<td><strong>Profile Management</strong></td>
+<td>Users can view and edit their personal details (name, email, phone, college, semester).</td>
+</tr>
+<tr>
+<td><strong>Auto Profile Creation</strong></td>
+<td>Django <code>post_save</code> signal automatically creates a Profile whenever a User is created — by any method (website, admin, MySQL Workbench, shell).</td>
+</tr>
+<tr>
+<td><strong>Admin Integration</strong></td>
+<td>Profile is displayed inline inside Django Admin's User edit page.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="module-2-notes-core-crud-content-management">Module 2: Notes (Core CRUD &amp; Content Management)</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Upload File Note</strong></td>
+<td>Upload PDF, DOCX, PPTX, image files with metadata (title, subject, branch, semester, description).</td>
+</tr>
+<tr>
+<td><strong>Create Online E-Note</strong></td>
+<td>Create rich-text notes directly in browser with a whiteboard drawing canvas for diagrams.</td>
+</tr>
+<tr>
+<td><strong>Browse Notes</strong></td>
+<td>Filter approved notes by subject, branch, semester, and keyword search. Sorting by newest, oldest, A-Z, popularity.</td>
+</tr>
+<tr>
+<td><strong>Note Detail View</strong></td>
+<td>Full note display with file preview (PDF inline, images), metadata, view count, likes, bookmarks, and comments section.</td>
+</tr>
+<tr>
+<td><strong>Real-Time View Counter</strong></td>
+<td>View count increments automatically using Django <code>F()</code> expression every time a note is opened.</td>
+</tr>
+<tr>
+<td><strong>Edit Note</strong></td>
+<td>Authors can edit their own notes (re-submits to admin for approval).</td>
+</tr>
+<tr>
+<td><strong>Delete Note</strong></td>
+<td>Authors can delete their own notes with confirmation page.</td>
+</tr>
+<tr>
+<td><strong>Save Draft</strong></td>
+<td>Users can save notes as "Draft" without submitting for review.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="module-3-social-engagement">Module 3: Social Engagement</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bookmarks (Save/Unsave)</strong></td>
+<td>Toggle bookmark on any note. AJAX-powered for seamless UX. Dedicated bookmarks page.</td>
+</tr>
+<tr>
+<td><strong>Likes</strong></td>
+<td>Toggle like/unlike on notes. AJAX response returns updated count.</td>
+</tr>
+<tr>
+<td><strong>Comments</strong></td>
+<td>Post discussion comments on note detail page. Ordered by newest first.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="module-4-admin-content-moderation">Module 4: Admin Content Moderation</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Admin Dashboard</strong></td>
+<td>Staff-only panel showing all notes with counts for Pending, Approved, and Rejected.</td>
+</tr>
+<tr>
+<td><strong>Approve/Reject Workflow</strong></td>
+<td>Admin can approve or reject any pending note. Only approved notes appear in Browse.</td>
+</tr>
+<tr>
+<td><strong>Status Management</strong></td>
+<td>4-state workflow: Draft → Pending → Approved/Rejected.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="module-5-dashboard-student-analytics">Module 5: Dashboard (Student Analytics)</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Personal Stats</strong></td>
+<td>Total notes uploaded, approved count, pending count, total downloads, total likes received.</td>
+</tr>
+<tr>
+<td><strong>Recent Notes</strong></td>
+<td>Quick view of user's latest uploaded notes.</td>
+</tr>
+<tr>
+<td><strong>Saved Bookmarks</strong></td>
+<td>Recent bookmarked notes for quick access.</td>
+</tr>
+<tr>
+<td><strong>Subject Exploration</strong></td>
+<td>Browse by subject categories with live note counts.</td>
+</tr>
+<tr>
+<td><strong>Community Feed</strong></td>
+<td>Recently uploaded and popular notes from the community.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="module-6-home-landing-page">Module 6: Home (Landing Page)</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hero Section</strong></td>
+<td>Brand showcase with tagline, live stats card showing total notes, views, subjects, and students.</td>
+</tr>
+<tr>
+<td><strong>Departments Grid</strong></td>
+<td>Quick navigation cards for Engineering branches (CSE, IT, ECE, ME, Civil, BCA/MCA).</td>
+</tr>
+<tr>
+<td><strong>About Section</strong></td>
+<td>Platform mission with 3-step workflow explanation.</td>
+</tr>
+<tr>
+<td><strong>Trending Notes</strong></td>
+<td>Preview of popular study materials (locked for non-authenticated users).</td>
+</tr>
+<tr>
+<td><strong>Features Section</strong></td>
+<td>Highlight of key platform capabilities.</td>
+</tr>
+<tr>
+<td><strong>Stats Banner</strong></td>
+<td>Full-width gradient banner with aggregate statistics.</td>
+</tr>
+<tr>
+<td><strong>Multi-Column Footer</strong></td>
+<td>Branch navigation, subject quick-jump dropdowns, and platform info.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-functional-requirements">8. Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01</td>
+<td>User can register with username, email, password, phone, college, and semester</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-02</td>
+<td>User can login with username and password (case-insensitive)</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-03</td>
+<td>User can view and update their profile information</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-04</td>
+<td>User can upload notes as PDF/DOCX/PPTX/Image files</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-05</td>
+<td>User can create online e-notes with rich text and whiteboard drawing</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-06</td>
+<td>User can browse approved notes with search, filter, and sort</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-07</td>
+<td>User can view full note details including inline file preview</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-08</td>
+<td>View counter increments in real-time when note is opened</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-09</td>
+<td>User can bookmark/unbookmark notes</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-10</td>
+<td>User can like/unlike notes</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-11</td>
+<td>User can post comments on notes</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-12</td>
+<td>User can edit/delete their own notes</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-13</td>
+<td>User can save notes as "Draft" without submitting</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-14</td>
+<td>Admin can view all notes in Admin Dashboard</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-15</td>
+<td>Admin can approve or reject pending notes</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-16</td>
+<td>All data stored in MySQL database (via MySQL Workbench)</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>FR-17</td>
+<td>Auto-create Profile for users created by any method</td>
+<td>✅ Implemented</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-non-functional-requirements">9. Non-Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Security</strong></td>
+<td>Passwords hashed with PBKDF2_SHA256. CSRF protection on all POST forms. Login required decorators on sensitive views. Staff-only access for admin panel.</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>View counter uses Django <code>F()</code> expression for atomic DB updates (no race conditions). Lazy QuerySet evaluation. Select-related for optimized JOINs.</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>MySQL production database. Concurrent session support with DB-backed sessions. Gunicorn multi-worker WSGI server.</td>
+</tr>
+<tr>
+<td><strong>Responsiveness</strong></td>
+<td>Fully responsive CSS with mobile breakpoints at 992px and 640px. Flexible grid layouts.</td>
+</tr>
+<tr>
+<td><strong>Usability</strong></td>
+<td>Clean academic blue color palette. Intuitive navigation. Flash messages for all user actions.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-implementation-details">10. Implementation Details</h2>
+<h3 id="101-user-registration-flow">10.1 User Registration Flow</h3>
+<pre class="codehilite"><code class="language-python"># accounts/views.py — register()
+def register(request):
+    if request.method == &quot;POST&quot;:
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            # 1. Create User in auth_user table
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                first_name=form.cleaned_data['first_name'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
+            )
+            # 2. Create Profile in accounts_profile table
+            Profile.objects.create(
+                user=user,
+                phone=form.cleaned_data.get('phone', ''),
+                college=form.cleaned_data.get('college', ''),
+                semester=form.cleaned_data.get('semester', 1)
+            )
+            # 3. Auto-login the user
+            login(request, user)
+            return redirect('dashboard')
+</code></pre>
+
+<h3 id="102-django-signal-for-auto-profile-creation">10.2 Django Signal for Auto-Profile Creation</h3>
+<pre class="codehilite"><code class="language-python"># accounts/signals.py
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(
+            user=instance,
+            defaults={'phone': '', 'college': 'Not specified', 'semester': 1}
+        )
+</code></pre>
+
+<h3 id="103-real-time-view-counter-atomic-update">10.3 Real-Time View Counter (Atomic Update)</h3>
+<pre class="codehilite"><code class="language-python"># notes/views.py — note_detail()
+if request.method == &quot;GET&quot;:
+    Note.objects.filter(pk=pk).update(views=F(&quot;views&quot;) + 1)
+    note.refresh_from_db()
+</code></pre>
+
+<p>This uses Django's <code>F()</code> expression to perform an atomic SQL <code>UPDATE notes_note SET views = views + 1</code> — preventing race conditions when multiple users view the note simultaneously.</p>
+<h3 id="104-mysql-database-connection">10.4 MySQL Database Connection</h3>
+<pre class="codehilite"><code class="language-python"># config/settings.py
+import pymysql
+pymysql.install_as_MySQLdb()
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'notehub_db',
+        'USER': 'root',
+        'PASSWORD': '****',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+</code></pre>
+
+<h3 id="105-content-moderation-workflow">10.5 Content Moderation Workflow</h3>
+<pre class="codehilite"><code>  User uploads note
+        │
+        ▼
+  Status = &quot;Pending&quot;
+        │
+        ▼
+  Admin reviews in Admin Dashboard
+        │
+   ┌────┴────┐
+   ▼         ▼
+Approved   Rejected
+   │
+   ▼
+Visible in Browse Notes
+</code></pre>
+
+<hr />
+<h2 id="11-url-routing-structure">11. URL Routing Structure</h2>
+<table>
+<thead>
+<tr>
+<th>URL Pattern</th>
+<th>View Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td><code>home.views.home</code></td>
+<td>Landing page with hero, departments, stats</td>
+</tr>
+<tr>
+<td><code>/accounts/register/</code></td>
+<td><code>accounts.views.register</code></td>
+<td>User registration</td>
+</tr>
+<tr>
+<td><code>/accounts/login/</code></td>
+<td><code>accounts.views.login_view</code></td>
+<td>User login</td>
+</tr>
+<tr>
+<td><code>/accounts/logout/</code></td>
+<td><code>accounts.views.logout_view</code></td>
+<td>User logout</td>
+</tr>
+<tr>
+<td><code>/accounts/profile/</code></td>
+<td><code>accounts.views.profile_view</code></td>
+<td>View &amp; edit profile</td>
+</tr>
+<tr>
+<td><code>/dashboard/</code></td>
+<td><code>dashboard.views.dashboard</code></td>
+<td>Student dashboard</td>
+</tr>
+<tr>
+<td><code>/notes/upload/</code></td>
+<td><code>notes.views.upload_note</code></td>
+<td>Upload file note</td>
+</tr>
+<tr>
+<td><code>/notes/create-online/</code></td>
+<td><code>notes.views.create_online_note</code></td>
+<td>Create e-note</td>
+</tr>
+<tr>
+<td><code>/notes/browse/</code></td>
+<td><code>notes.views.browse_notes</code></td>
+<td>Browse &amp; search notes</td>
+</tr>
+<tr>
+<td><code>/notes/detail/&lt;id&gt;/</code></td>
+<td><code>notes.views.note_detail</code></td>
+<td>View note details</td>
+</tr>
+<tr>
+<td><code>/notes/my-notes/</code></td>
+<td><code>notes.views.my_notes</code></td>
+<td>User's uploaded notes</td>
+</tr>
+<tr>
+<td><code>/notes/edit/&lt;id&gt;/</code></td>
+<td><code>notes.views.edit_note</code></td>
+<td>Edit own note</td>
+</tr>
+<tr>
+<td><code>/notes/delete/&lt;id&gt;/</code></td>
+<td><code>notes.views.delete_note</code></td>
+<td>Delete own note</td>
+</tr>
+<tr>
+<td><code>/notes/bookmark/&lt;id&gt;/</code></td>
+<td><code>notes.views.toggle_bookmark</code></td>
+<td>Save/unsave bookmark</td>
+</tr>
+<tr>
+<td><code>/notes/like/&lt;id&gt;/</code></td>
+<td><code>notes.views.toggle_like</code></td>
+<td>Like/unlike note</td>
+</tr>
+<tr>
+<td><code>/notes/bookmarks/</code></td>
+<td><code>notes.views.bookmarks_list</code></td>
+<td>View saved bookmarks</td>
+</tr>
+<tr>
+<td><code>/notes/admin-dashboard/</code></td>
+<td><code>notes.views.admin_dashboard</code></td>
+<td>Admin moderation panel</td>
+</tr>
+<tr>
+<td><code>/notes/approve/&lt;id&gt;/</code></td>
+<td><code>notes.views.approve_note</code></td>
+<td>Approve a note</td>
+</tr>
+<tr>
+<td><code>/notes/reject/&lt;id&gt;/</code></td>
+<td><code>notes.views.reject_note</code></td>
+<td>Reject a note</td>
+</tr>
+<tr>
+<td><code>/notes/view/&lt;id&gt;/</code></td>
+<td><code>notes.views.view_note</code></td>
+<td>Inline file viewer</td>
+</tr>
+<tr>
+<td><code>/notes/download/&lt;id&gt;/</code></td>
+<td><code>notes.views.download_note</code></td>
+<td>Download file</td>
+</tr>
+<tr>
+<td><code>/admin/</code></td>
+<td>Django Admin</td>
+<td>Built-in admin panel</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-screenshots-user-interface">12. Screenshots &amp; User Interface</h2>
+<h3 id="design-system">Design System</h3>
+<p>The UI uses a custom-built CSS design system (1300+ lines) with:<br />
+- <strong>Color Palette:</strong> Academic blue (#2563eb) as primary, steel slate neutrals, clean white surfaces<br />
+- <strong>Typography:</strong> Poppins font family from Google Fonts<br />
+- <strong>Components:</strong> Cards, pills, badges, buttons, dropdowns, forms, tables<br />
+- <strong>Responsive:</strong> Full mobile/tablet/desktop breakpoints</p>
+<h3 id="key-pages">Key Pages:</h3>
+<ol>
+<li><strong>Home Page</strong> — Hero section with live stats, Engineering departments grid, About section, Trending notes preview, Features showcase, Stats banner, 3-column footer</li>
+<li><strong>Dashboard</strong> — Personal analytics cards, recent notes, bookmarks, subject exploration, community feed</li>
+<li><strong>Browse Notes</strong> — Multi-filter sidebar (search, subject, branch, semester, sort), note cards grid with bookmark/view buttons</li>
+<li><strong>Note Detail</strong> — Full content display, inline PDF/image preview, metadata sidebar, comments section, like/bookmark actions</li>
+<li><strong>Upload Note</strong> — Form with title, subject, branch, semester, description, file upload</li>
+<li><strong>Create E-Note</strong> — Rich text editor with whiteboard canvas for drawings</li>
+<li><strong>My Notes</strong> — Table view of all uploaded notes with status pills, action buttons</li>
+<li><strong>Admin Dashboard</strong> — All notes management with approve/reject actions, status filtering</li>
+<li><strong>Login / Register</strong> — Split-panel design with brand sidebar and form</li>
+<li><strong>Profile</strong> — View and edit personal information</li>
+</ol>
+<hr />
+<h2 id="13-testing-validation">13. Testing &amp; Validation</h2>
+<h3 id="131-functional-testing">13.1 Functional Testing</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Expected Result</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Register with valid data</td>
+<td>User created, logged in, redirected to dashboard</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Register with duplicate username</td>
+<td>Error message "Username is already taken"</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Register with mismatched passwords</td>
+<td>Error message "Passwords do not match"</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Login with valid credentials</td>
+<td>Redirected to dashboard with welcome message</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Login with invalid credentials</td>
+<td>Error message displayed</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Upload PDF note</td>
+<td>Note saved with Pending status</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Create online e-note</td>
+<td>E-note saved with content and drawing data</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Browse with search filter</td>
+<td>Only matching notes displayed</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>View note detail</td>
+<td>View counter increments by 1</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Bookmark/unbookmark note</td>
+<td>Toggle works, reflected in bookmarks page</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Like/unlike note</td>
+<td>Like count updates correctly</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Post comment</td>
+<td>Comment appears on note detail page</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Admin approve note</td>
+<td>Status changes to Approved, visible in Browse</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Admin reject note</td>
+<td>Status changes to Rejected, hidden from Browse</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Non-staff access admin dashboard</td>
+<td>403 Forbidden</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>Create user from Django shell</td>
+<td>Profile auto-created by signal</td>
+<td>✅ Pass</td>
+</tr>
+</tbody>
+</table>
+<h3 id="132-database-verification">13.2 Database Verification</h3>
+<pre class="codehilite"><code class="language-sql">-- Verified in MySQL Workbench:
+SELECT COUNT(*) FROM auth_user;          -- 4 users
+SELECT COUNT(*) FROM accounts_profile;   -- 4 profiles (1:1 match)
+SELECT COUNT(*) FROM notes_note;         -- All notes with correct status
+SELECT COUNT(*) FROM notes_bookmark;     -- Bookmarks linked correctly
+SELECT COUNT(*) FROM notes_comment;      -- Comments linked correctly
+</code></pre>
+
+<hr />
+<h2 id="14-future-scope">14. Future Scope</h2>
+<ol>
+<li><strong>AI-Powered Note Summarization</strong> — Integrate OpenAI/Gemini API to auto-generate summaries of uploaded PDFs.</li>
+<li><strong>Real-Time Chat</strong> — WebSocket-based study group chat rooms per subject.</li>
+<li><strong>Email Notifications</strong> — Notify users when their notes are approved/rejected.</li>
+<li><strong>Mobile App</strong> — React Native or Flutter mobile application.</li>
+<li><strong>OCR Integration</strong> — Extract text from handwritten note images for searchability.</li>
+<li><strong>Gamification</strong> — Leaderboards, badges, and reward points for top contributors.</li>
+<li><strong>Multi-Language Support</strong> — Hindi and regional language translations.</li>
+<li><strong>Cloud Deployment</strong> — Deploy on AWS/GCP/Render with S3 for file storage.</li>
+<li><strong>Analytics Dashboard</strong> — Advanced charts showing upload trends, popular subjects, and user engagement metrics.</li>
+<li><strong>Plagiarism Detection</strong> — Check uploaded notes for duplicate content.</li>
+</ol>
+<hr />
+<h2 id="15-conclusion">15. Conclusion</h2>
+<p><strong>StudyVerse</strong> successfully demonstrates a full-stack web application built using the Django framework with MySQL database integration. The platform addresses a real-world problem faced by engineering students — the lack of a centralized, verified, and collaborative study material sharing system.</p>
+<h3 id="key-achievements">Key Achievements:</h3>
+<ul>
+<li>✅ <strong>Complete CRUD Operations</strong> for notes with file upload and online e-note creation</li>
+<li>✅ <strong>Secure Authentication</strong> with password hashing, CSRF protection, and session management</li>
+<li>✅ <strong>Admin Content Moderation</strong> with 4-state workflow (Draft → Pending → Approved/Rejected)</li>
+<li>✅ <strong>Social Features</strong> including bookmarks, likes, and comments</li>
+<li>✅ <strong>MySQL Production Database</strong> managed via MySQL Workbench</li>
+<li>✅ <strong>Responsive UI Design</strong> with custom CSS design system</li>
+<li>✅ <strong>Django Signals</strong> for automatic profile creation across all user creation methods</li>
+<li>✅ <strong>Real-Time View Tracking</strong> using atomic database operations</li>
+<li>✅ <strong>Multi-Branch &amp; Semester Filtering</strong> for targeted note discovery</li>
+</ul>
+<p>The project demonstrates proficiency in <strong>Python, Django, MySQL, HTML/CSS/JavaScript, Git</strong>, and <strong>software engineering principles</strong> including separation of concerns, DRY (Don't Repeat Yourself), and the MVC/MVT design pattern.</p>
+<hr />
+<p><em>Report prepared by Ayush Kumar | July 2026</em><br />
+<em>StudyVerse — Empowering Minds, Sharing Knowledge</em></p>
+</body>
+</html>
