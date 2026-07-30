@@ -419,17 +419,24 @@ def view_note(request, pk):
         return HttpResponseForbidden("Not allowed.")
 
     if note.file:
+        # 1. Try local filesystem path first
         try:
             if os.path.exists(note.file.path):
                 content_type, _ = mimetypes.guess_type(note.file.path)
                 response = FileResponse(open(note.file.path, "rb"), content_type=content_type or "application/octet-stream")
                 response["Content-Disposition"] = f'inline; filename="{os.path.basename(note.file.name)}"'
                 return response
-        except NotImplementedError:
-            return redirect(note.file.url)
-        except Exception:
+        except (NotImplementedError, AttributeError, Exception):
             pass
-        return redirect(note.file.url)
+
+        # 2. Stream remote S3 file directly through Django (bypasses Sophos iframe blocks)
+        try:
+            content_type, _ = mimetypes.guess_type(note.file.name)
+            response = FileResponse(note.file.open("rb"), content_type=content_type or "application/pdf")
+            response["Content-Disposition"] = f'inline; filename="{os.path.basename(note.file.name)}"'
+            return response
+        except Exception:
+            return redirect(note.file.url)
     else:
         return redirect("note_detail", pk=pk)
 
@@ -445,14 +452,21 @@ def download_note(request, pk):
     note.save()
 
     if note.file:
+        # 1. Try local filesystem path first
         try:
             if os.path.exists(note.file.path):
                 return FileResponse(open(note.file.path, "rb"), as_attachment=True)
-        except NotImplementedError:
-            return redirect(note.file.url)
-        except Exception:
+        except (NotImplementedError, AttributeError, Exception):
             pass
-        return redirect(note.file.url)
+
+        # 2. Stream remote S3 file as attachment through Django
+        try:
+            content_type, _ = mimetypes.guess_type(note.file.name)
+            response = FileResponse(note.file.open("rb"), content_type=content_type or "application/octet-stream")
+            response["Content-Disposition"] = f'attachment; filename="{os.path.basename(note.file.name)}"'
+            return response
+        except Exception:
+            return redirect(note.file.url)
     else:
         messages.info(request, "Online e-notes can be viewed directly on the website!")
         return redirect("note_detail", pk=pk)
