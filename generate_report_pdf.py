@@ -142,6 +142,7 @@ details = [
     ('Semester:', '7th Semester'),
     ('AWS EC2 URL:', 'http://23.20.190.164'),
     ('AWS RDS Host:', 'dbstudyverse.c6nwkq8cuodu.us-east-1.rds.amazonaws.com'),
+    ('AWS S3 Bucket:', 'studyverse-uploads (us-east-1)'),
     ('GitHub Repo:', 'github.com/Ayush12708/e-notes-sharing-application'),
     ('Date:', 'July 2026'),
 ]

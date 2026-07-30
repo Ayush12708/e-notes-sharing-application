@@ -2,6 +2,7 @@
 
 [![AWS EC2 Live](https://img.shields.io/badge/AWS-EC2%20Live%20Demo-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](http://23.20.190.164)
 [![AWS RDS MySQL](https://img.shields.io/badge/AWS-RDS%20MySQL%208.0-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)](http://23.20.190.164)
+[![AWS S3 Storage](https://img.shields.io/badge/AWS-S3%20Bucket%20Uploads-569A31?style=for-the-badge&logo=amazons3&logoColor=white)](http://23.20.190.164)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://e-notes-sharing-application.vercel.app)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ayush12708/e-notes-sharing-application)
 ![Django](https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white)
@@ -10,6 +11,7 @@
 
 > 🌐 **AWS EC2 Production Live App**: [http://23.20.190.164](http://23.20.190.164)  
 > 🗄️ **AWS RDS Production Database**: `dbstudyverse.c6nwkq8cuodu.us-east-1.rds.amazonaws.com`  
+> 🪣 **AWS S3 File Storage Bucket**: `studyverse-uploads` (`us-east-1`)  
 > ⚡ **Vercel Live App**: [https://e-notes-sharing-application.vercel.app](https://e-notes-sharing-application.vercel.app)  
 > 📄 **Project PDF Report**: [StudyVerse_Project_Report.pdf](./StudyVerse_Project_Report.pdf)  
 >
